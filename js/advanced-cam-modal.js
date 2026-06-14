@@ -32,6 +32,12 @@ function typeofOperation(newval, objectseq) {
   } else if (newval == "CNC: Pocket") {
     cncPocketMode(objectseq);
     updateCamUserData(objectseq);
+  } else if (newval == "CNC: Pocket (Raster)") {
+    cncPocketRasterMode(objectseq);
+    updateCamUserData(objectseq);
+  } else if (newval == "CNC: Texture") {
+    cncTextureMode(objectseq);
+    updateCamUserData(objectseq);
   } else if (newval == "CNC: V-Engrave") {
     cncVEngMode(objectseq);
     updateCamUserData(objectseq);
@@ -123,6 +129,14 @@ function initAdvancedCAM() {
       updateCamUserData(objectseq);
     } else if (id.indexOf('tRampPlunge') == 0) {
       updateCamUserData(objectseq);
+    } else if (id.indexOf('ttexturetype') == 0) {
+      updateCamUserData(objectseq);
+    } else if (id.indexOf('ttexturespacing') == 0) {
+      updateCamUserData(objectseq);
+    } else if (id.indexOf('ttextureamplitude') == 0) {
+      updateCamUserData(objectseq);
+    } else if (id.indexOf('ttextureangle') == 0) {
+      updateCamUserData(objectseq);
     } else if (id.indexOf('advanced') == 0) {
       updateCamUserData(objectseq);
     } else if (id.indexOf('tpwr') == 0) {
@@ -194,6 +208,10 @@ function updateCamUserData(i) {
   toolpathsInScene[i].userData.camTabWidth = $('#tabWidth' + i).val();
   toolpathsInScene[i].userData.camTabSpace = $('#tabSpace' + i).val();
   toolpathsInScene[i].userData.tRampPlunge = $('#tRampPlunge' + i).val();
+  toolpathsInScene[i].userData.camTextureType = $('#ttexturetype' + i).val();
+  toolpathsInScene[i].userData.camTextureSpacing = $('#ttexturespacing' + i).val();
+  toolpathsInScene[i].userData.camTextureAmplitude = $('#ttextureamplitude' + i).val();
+  toolpathsInScene[i].userData.camTextureAngle = $('#ttextureangle' + i).val();
   toolpathsInScene[i].userData.plotterType = $('#tplottertype' + i).val();
   toolpathsInScene[i].userData.camPenUp = $('#tpenup' + i).val();
   toolpathsInScene[i].userData.camPenDown = $('#tpendown' + i).val();
@@ -249,6 +267,8 @@ function setupJob(i) {
                 <option class="camOption">CNC: Vector (path inside)</option>
                 <option class="camOption">CNC: Vector (path outside)</option>
                 <option class="camOption">CNC: Pocket</option>
+                <option class="camOption">CNC: Pocket (Raster)</option>
+                <option class="camOption">CNC: Texture</option>
               </optgroup>
               <optgroup label="Plasma" class="camOptgroup">
                 <option class="camOption">Plasma: Vector (path outside)</option>
@@ -351,7 +371,7 @@ function setupJob(i) {
           </div>
         </td>
       </tr>
-      <tr class="inputlaserraster inputpenraster">
+      <tr class="inputlaserraster inputpenraster inputpocketraster">
         <td>Fill Angle</td>
         <td>
           <div class="input-addon">
@@ -398,6 +418,49 @@ function setupJob(i) {
             <span class="input-addon-label-left"><span class="fas fa-arrow-down"></span></span>
             <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="300" id="tplungespeed` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm/min</span>
+          </div>
+        </td>
+      </tr>
+      <tr class="inputtexture">
+        <td>Texture Type</td>
+        <td>
+          <div class="input-addon">
+            <select class="cam-form-field" id="ttexturetype` + i + `" objectseq="` + i + `" style="width:100%;">
+              <option>Linear Sweep</option>
+              <option>Crosshatch</option>
+              <option>Peck Grid</option>
+              <option>Diamond Plate</option>
+              <option>Sine Ripple</option>
+              <option>Radial Ripple</option>
+              <option>Random Stipple</option>
+            </select>
+          </div>
+        </td>
+      </tr>
+      <tr class="inputtexture">
+        <td>Spacing / Resolution</td>
+        <td>
+          <div class="input-addon">
+            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="2" id="ttexturespacing` + i + `" objectseq="` + i + `" min="0.1" step="any">
+            <span class="input-addon-label-right">mm</span>
+          </div>
+        </td>
+      </tr>
+      <tr class="inputtexture">
+        <td>Amplitude / Z Variation</td>
+        <td>
+          <div class="input-addon">
+            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="0.5" id="ttextureamplitude` + i + `" objectseq="` + i + `" min="0" step="any">
+            <span class="input-addon-label-right">mm</span>
+          </div>
+        </td>
+      </tr>
+      <tr class="inputtexture">
+        <td>Pattern Angle</td>
+        <td>
+          <div class="input-addon">
+            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="0" id="ttextureangle` + i + `" objectseq="` + i + `" min="0" max="180" step="any">
+            <span class="input-addon-label-right">deg</span>
           </div>
         </td>
       </tr>
@@ -688,6 +751,18 @@ function setupJob(i) {
     } else {
       $('#tRampPlunge' + i).val("No").prop('selected', true);
     }
+    if (toolpathsInScene[i].userData.camTextureType) {
+      $('#ttexturetype' + i).val(toolpathsInScene[i].userData.camTextureType).prop('selected', true);
+    }
+    if (toolpathsInScene[i].userData.camTextureSpacing) {
+      $('#ttexturespacing' + i).val(toolpathsInScene[i].userData.camTextureSpacing);
+    }
+    if (toolpathsInScene[i].userData.camTextureAmplitude) {
+      $('#ttextureamplitude' + i).val(toolpathsInScene[i].userData.camTextureAmplitude);
+    }
+    if (toolpathsInScene[i].userData.camTextureAngle) {
+      $('#ttextureangle' + i).val(toolpathsInScene[i].userData.camTextureAngle);
+    }
     $('#tplasmaihs' + i).val(toolpathsInScene[i].userData.camPlasmaIHS).prop('selected', true);
     $('#tunion' + i).val(toolpathsInScene[i].userData.camUnion).prop('selected', true);
     $('#tdirection' + i).val(toolpathsInScene[i].userData.camDirection).prop('selected', true);
@@ -763,6 +838,7 @@ function setupJob(i) {
 function noMode(i) {
   $('.inputcnc').hide();
   $('.inputpocket').hide();
+  $('.inputpocketraster').hide();
   $('.inputlaser').hide();
   $('.inputdragknife').hide();
   $('.inputplasma').hide();
@@ -771,11 +847,13 @@ function noMode(i) {
   $('.inputplotter').hide();
   $('.inputpenraster').hide();
   $('.inputlaserraster').hide();
+  $('.inputtexture').hide();
 }
 
 function laserMode(i) {
   $('.inputcnc').hide();
   $('.inputpocket').hide();
+  $('.inputpocketraster').hide();
   $('.inputdragknife').hide();
   $('.inputplasma').hide();
   $(".inputlasernooffset").hide();
@@ -784,12 +862,14 @@ function laserMode(i) {
   $('.inputlaserraster').hide();
   $('.inputplotter').hide();
   $('.inputpenraster').hide();
+  $('.inputtexture').hide();
   $('.inputlaser').show();
 };
 
 function laserInsideMode(i) {
   $('.inputcnc').hide();
   $('.inputpocket').hide();
+  $('.inputpocketraster').hide();
   $('.inputdragknife').hide();
   $('.inputplasma').hide();
   $('.inputdrill').hide();
@@ -797,12 +877,14 @@ function laserInsideMode(i) {
   $('.inputlaserraster').hide();
   $('.inputplotter').hide();
   $('.inputpenraster').hide();
+  $('.inputtexture').hide();
   $('.inputlaser').show();
 };
 
 function laserOutsideMode(i) {
   $('.inputcnc').hide();
   $('.inputpocket').hide();
+  $('.inputpocketraster').hide();
   $('.inputdragknife').hide();
   $('.inputplasma').hide();
   $('.inputdrill').hide();
@@ -810,24 +892,28 @@ function laserOutsideMode(i) {
   $('.inputlaserraster').hide();
   $('.inputplotter').hide();
   $('.inputpenraster').hide();
+  $('.inputtexture').hide();
   $('.inputlaser').show();
 };
 
 function laserRasterMode(i) {
   $('.inputcnc').hide();
   $('.inputpocket').hide();
+  $('.inputpocketraster').hide();
   $('.inputdragknife').hide();
   $('.inputplasma').hide();
   $('.inputdrill').hide();
   $('.inputdrillpeck').hide();
   $('.inputplotter').hide();
   $('.inputpenraster').hide();
+  $('.inputtexture').hide();
   $('.inputlaserraster').show();
 };
 
 function drillMode(i) {
   $('.inputlaser').hide();
   $('.inputpocket').hide();
+  $('.inputpocketraster').hide();
   $('.inputdragknife').hide();
   $('.inputplasma').hide();
   $('.inputcnc').hide();
@@ -835,12 +921,14 @@ function drillMode(i) {
   $('.inputlaserraster').hide();
   $('.inputplotter').hide();
   $('.inputpenraster').hide();
+  $('.inputtexture').hide();
   $('.inputdrill').show();
 }
 
 function drillPeckMode(i) {
   $('.inputlaser').hide();
   $('.inputpocket').hide();
+  $('.inputpocketraster').hide();
   $('.inputdragknife').hide();
   $('.inputplasma').hide();
   $('.inputcnc').hide();
@@ -848,6 +936,7 @@ function drillPeckMode(i) {
   $('.inputlaserraster').hide();
   $('.inputplotter').hide();
   $('.inputpenraster').hide();
+  $('.inputtexture').hide();
   $('.inputdrillpeck').show();
 
 }
@@ -855,6 +944,7 @@ function drillPeckMode(i) {
 function cncInsideMode(i) {
   $('.inputlaser').hide();
   $('.inputpocket').hide();
+  $('.inputpocketraster').hide();
   $('.inputdragknife').hide();
   $('.inputplasma').hide();
   $('.inputdrill').hide();
@@ -862,12 +952,14 @@ function cncInsideMode(i) {
   $('.inputlaserraster').hide();
   $('.inputplotter').hide();
   $('.inputpenraster').hide();
+  $('.inputtexture').hide();
   $('.inputcnc').show();
 };
 
 function cncOutsideMode(i) {
   $('.inputlaser').hide();
   $('.inputpocket').hide();
+  $('.inputpocketraster').hide();
   $('.inputdragknife').hide();
   $('.inputplasma').hide();
   $('.inputdrill').hide();
@@ -875,12 +967,14 @@ function cncOutsideMode(i) {
   $('.inputlaserraster').hide();
   $('.inputplotter').hide();
   $('.inputpenraster').hide();
+  $('.inputtexture').hide();
   $('.inputcnc').show();
 };
 
 function cncNoOffsetMode(i) {
   $('.inputlaser').hide();
   $('.inputpocket').hide();
+  $('.inputpocketraster').hide();
   $('.inputdragknife').hide();
   $('.inputplasma').hide();
   $('.inputdrill').hide();
@@ -889,6 +983,7 @@ function cncNoOffsetMode(i) {
   $('.inputlaserraster').hide();
   $('.inputplotter').hide();
   $('.inputpenraster').hide();
+  $('.inputtexture').hide();
   $('.inputcnc').show();
 
 }
@@ -903,6 +998,8 @@ function cncPocketMode(i) {
   $('.inputlaserraster').hide();
   $('.inputplotter').hide();
   $('.inputpenraster').hide();
+  $('.inputtexture').hide();
+  $('.inputpocketraster').hide();
   $('.inputpocket').show();
   // force open Advanced and force Union by default
   setTimeout(function() {
@@ -914,9 +1011,49 @@ function cncPocketMode(i) {
   }
 };
 
+function cncPocketRasterMode(i) {
+  $('.inputlaser').hide();
+  $('.inputdragknife').hide();
+  $('.inputplasma').hide();
+  $('.inputcnc').hide();
+  $('.inputdrill').hide();
+  $('.inputdrillpeck').hide();
+  $('.inputlaserraster').hide();
+  $('.inputplotter').hide();
+  $('.inputpenraster').hide();
+  $('.inputtexture').hide();
+  // Show pocket fields but hide raster-irrelevant ones
+  $('.inputpocket').show();
+  $('.inputpocketraster').show();
+  $('#tunion' + i).closest('tr').hide();
+  $('#tRampPlunge' + i).closest('tr').hide();
+  $('#tdirection' + i).closest('tr').hide();
+  // force open Advanced
+  setTimeout(function() {
+    $('#advanced' + i).prop('checked', true);
+    $('#collapsediv' + i).data("collapse")['expand']()
+  }, 200);
+};
+
+function cncTextureMode(i) {
+  $('.inputlaser').hide();
+  $('.inputdragknife').hide();
+  $('.inputplasma').hide();
+  $('.inputpocket').hide();
+  $('.inputpocketraster').hide();
+  $('.inputdrill').hide();
+  $('.inputdrillpeck').hide();
+  $('.inputlaserraster').hide();
+  $('.inputplotter').hide();
+  $('.inputpenraster').hide();
+  $('.inputcnc').show();
+  $('.inputtexture').show();
+};
+
 function plasmaMode(i) {
   $('.inputcnc').hide();
   $('.inputpocket').hide();
+  $('.inputpocketraster').hide();
   $('.inputlaser').hide();
   $('.inputdragknife').hide();
   $('.inputdrill').hide();
@@ -924,6 +1061,7 @@ function plasmaMode(i) {
   $('.inputlaserraster').hide();
   $('.inputplotter').hide();
   $('.inputpenraster').hide();
+  $('.inputtexture').hide();
   $('.inputplasma').show();
 };
 
@@ -931,6 +1069,7 @@ function plasmaMode(i) {
 function dragKnifeMode(i) {
   $('.inputcnc').hide();
   $('.inputpocket').hide();
+  $('.inputpocketraster').hide();
   $('.inputlaser').hide();
   $('.inputplasma').hide();
   $('.inputdrill').hide();
@@ -938,12 +1077,14 @@ function dragKnifeMode(i) {
   $('.inputlaserraster').hide();
   $('.inputplotter').hide();
   $('.inputpenraster').hide();
+  $('.inputtexture').hide();
   $('.inputdragknife').show();
 };
 
 function plotterMode(i) {
   $('.inputcnc').hide();
   $('.inputpocket').hide();
+  $('.inputpocketraster').hide();
   $('.inputlaser').hide();
   $('.inputplasma').hide();
   $('.inputdrill').hide();
@@ -951,6 +1092,7 @@ function plotterMode(i) {
   $('.inputlaserraster').hide();
   $('.inputdragknife').hide();
   $('.inputpenraster').hide();
+  $('.inputtexture').hide();
   $('.inputplotter').show();
   if ($('#tplottertype' + i).val() == "Z-Axis") {
     plotterModeZ(i)
@@ -963,12 +1105,14 @@ function plotterMode(i) {
 function penRasterMode(i) {
   $('.inputcnc').hide();
   $('.inputpocket').hide();
+  $('.inputpocketraster').hide();
   $('.inputdragknife').hide();
   $('.inputplasma').hide();
   $('.inputdrill').hide();
   $('.inputdrillpeck').hide();
   $('.inputplotter').hide();
   $('.inputlaserraster').hide();
+  $('.inputtexture').hide();
   $('.inputpenraster').show();
   if ($('#tplottertype' + i).val() == "Z-Axis") {
     plotterModeZ(i)

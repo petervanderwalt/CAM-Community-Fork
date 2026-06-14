@@ -55,6 +55,10 @@ if (typeof window == "undefined") { // Only run as worker
       tabspace: parseFloat(toolpath.userData.camTabSpace, 2),
       tabwidth: parseFloat(toolpath.userData.camTabWidth, 2),
       direction: toolpath.userData.camDirection,
+      textureType: toolpath.userData.camTextureType || "Linear Sweep",
+      textureSpacing: parseFloat(toolpath.userData.camTextureSpacing, 2) || 2,
+      textureAmplitude: parseFloat(toolpath.userData.camTextureAmplitude, 2) || 0.5,
+      textureAngle: parseFloat(toolpath.userData.camTextureAngle, 2) || 0,
       performanceLimit: performanceLimit,
     };
     var operation = toolpath.userData.camOperation;
@@ -108,6 +112,15 @@ if (typeof window == "undefined") { // Only run as worker
     } else if (operation == "CNC: Pocket") {
       console.log("CNC: Pocket");
       toolpath.userData.inflated = workerPocketPath(config)
+    } else if (operation == "CNC: Pocket (Raster)") {
+      console.log("CNC: Pocket (Raster)");
+      config.offset = config.offset; // half tool dia
+      config.angle = toolpath.userData.camFillAngle || 0;
+      toolpath.userData.inflated = workerPocketRasterPath(config)
+    } else if (operation == "CNC: Texture") {
+      console.log("CNC: Texture");
+      config.offset = config.offset; // half tool dia
+      toolpath.userData.inflated = workerTexturePath(config)
     } else if (operation == "CNC: V-Engrave") {
       console.log("CNC: V-Engrave");
       // no op yet
@@ -1450,6 +1463,302 @@ if (typeof window == "undefined") { // Only run as worker
       } // end no union
     }
   };
+
+  function pointInPolygon(point, polygon) {
+    var x = point.X, y = point.Y;
+    var inside = false;
+    for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+      var xi = polygon[i].X, yi = polygon[i].Y;
+      var xj = polygon[j].X, yj = polygon[j].Y;
+      if ((yi > y) != (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) {
+        inside = !inside;
+      }
+    }
+    return inside;
+  }
+
+  function workerTexturePath(config) {
+    var textureGrp = new THREE.Group();
+    var clipperPaths = workerGetClipperPaths(config.toolpath);
+    var boundary = workerSimplifyPolygons(clipperPaths);
+    if (boundary.length < 1) {
+      console.error("Texture: Clipper Simplification Failed");
+      return textureGrp;
+    }
+    var boundaryInset = workerGetInflatePath(boundary, -config.offset);
+    if (boundaryInset.length < 1) boundaryInset = boundary;
+
+    var bounds = clipperBounds(boundaryInset);
+    var cx = (bounds.minX + bounds.maxX) / 2;
+    var cy = (bounds.minY + bounds.maxY) / 2;
+    var r = dist(cx, cy, bounds.minX, bounds.minY) + config.textureSpacing;
+
+    var angle = config.textureAngle || 0;
+    var m = mat3.fromTranslation([], [cx, cy]);
+    m = mat3.rotate([], m, angle * Math.PI / 180);
+    m = mat3.translate([], m, [-cx, -cy]);
+    var transform = function(x, y) {
+      var p = vec2.transformMat3([], [x, y], m);
+      return { X: p[0], Y: p[1] };
+    };
+
+    var depth = config.zdepth;
+    var spacing = config.textureSpacing;
+    var amplitude = config.textureAmplitude;
+    var material = new THREE.LineBasicMaterial({ color: toolpathColor, transparent: true, opacity: 1 });
+    var sampleStep = 0.3; // mm between sample points for boundary clipping
+
+    function addLine(p1, p2, zFn) {
+      var dx = p2.X - p1.X;
+      var dy = p2.Y - p1.Y;
+      var len = Math.sqrt(dx * dx + dy * dy);
+      var steps = Math.max(2, Math.ceil(len / sampleStep));
+      var pts = [];
+      for (var t = 0; t <= steps; t++) {
+        var frac = t / steps;
+        var px = p1.X + dx * frac;
+        var py = p1.Y + dy * frac;
+        var isInside = false;
+        for (var b = 0; b < boundaryInset.length; b++) {
+          if (pointInPolygon({ X: px, Y: py }, boundaryInset[b])) {
+            isInside = true;
+            break;
+          }
+        }
+        if (isInside) {
+          var distAlong = len * frac;
+          var z = zFn ? zFn(distAlong, len) : -depth;
+          pts.push({ X: px, Y: py, Z: z });
+        } else if (pts.length >= 2) {
+          var geo = new THREE.Geometry();
+          for (var v = 0; v < pts.length; v++) {
+            geo.vertices.push(new THREE.Vector3(pts[v].X, pts[v].Y, pts[v].Z));
+          }
+          var line = new THREE.Line(geo, material);
+          line.position.set(config.toolpath.position.x, config.toolpath.position.y, 0);
+          textureGrp.add(line);
+          pts = [];
+        } else {
+          pts = [];
+        }
+      }
+      if (pts.length >= 2) {
+        var geo = new THREE.Geometry();
+        for (var v = 0; v < pts.length; v++) {
+          geo.vertices.push(new THREE.Vector3(pts[v].X, pts[v].Y, pts[v].Z));
+        }
+        var line = new THREE.Line(geo, material);
+        line.position.set(config.toolpath.position.x, config.toolpath.position.y, 0);
+        textureGrp.add(line);
+      }
+    }
+
+    function addPoint(x, y, z) {
+      var isInside = false;
+      for (var b = 0; b < boundaryInset.length; b++) {
+        if (pointInPolygon({ X: x, Y: y }, boundaryInset[b])) {
+          isInside = true;
+          break;
+        }
+      }
+      if (!isInside) return;
+      var geo = new THREE.Geometry();
+      geo.vertices.push(new THREE.Vector3(x, y, 0));
+      geo.vertices.push(new THREE.Vector3(x, y, -z));
+      var line = new THREE.Line(geo, material);
+      line.position.set(config.toolpath.position.x, config.toolpath.position.y, 0);
+      textureGrp.add(line);
+    }
+
+    if (config.textureType == "Linear Sweep") {
+      for (var y = cy - r; y <= cy + r; y += spacing) {
+        var p1 = transform(cx - r, y);
+        var p2 = transform(cx + r, y);
+        addLine(p1, p2, function(d, l) {
+          return -depth + amplitude * Math.sin(d * Math.PI / spacing);
+        });
+      }
+    } else if (config.textureType == "Crosshatch") {
+      for (var y = cy - r; y <= cy + r; y += spacing) {
+        var p1 = transform(cx - r, y);
+        var p2 = transform(cx + r, y);
+        addLine(p1, p2, function(d, l) {
+          return -depth + amplitude * Math.sin(d * Math.PI / spacing);
+        });
+      }
+      // Second set at +90 degrees
+      var m2 = mat3.fromTranslation([], [cx, cy]);
+      m2 = mat3.rotate([], m2, (angle + 90) * Math.PI / 180);
+      m2 = mat3.translate([], m2, [-cx, -cy]);
+      var transform2 = function(x, y) {
+        var p = vec2.transformMat3([], [x, y], m2);
+        return { X: p[0], Y: p[1] };
+      };
+      for (var y = cy - r; y <= cy + r; y += spacing) {
+        var p1 = transform2(cx - r, y);
+        var p2 = transform2(cx + r, y);
+        addLine(p1, p2, function(d, l) {
+          return -depth + amplitude * Math.sin(d * Math.PI / spacing);
+        });
+      }
+    } else if (config.textureType == "Peck Grid") {
+      for (var py = cy - r; py <= cy + r; py += spacing) {
+        for (var px = cx - r; px <= cx + r; px += spacing) {
+          var pt = transform(px, py);
+          addPoint(pt.X, pt.Y, depth);
+        }
+      }
+    } else if (config.textureType == "Diamond Plate") {
+      // V-grooves in two directions at full depth
+      // V-bit shape naturally leaves diamond standing between grooves
+      for (var y = cy - r; y <= cy + r; y += spacing) {
+        var p1 = transform(cx - r, y);
+        var p2 = transform(cx + r, y);
+        addLine(p1, p2, function(d, l) { return -depth; });
+      }
+      var m2 = mat3.fromTranslation([], [cx, cy]);
+      m2 = mat3.rotate([], m2, (angle + 90) * Math.PI / 180);
+      m2 = mat3.translate([], m2, [-cx, -cy]);
+      var transform2 = function(x, y) {
+        var p = vec2.transformMat3([], [x, y], m2);
+        return { X: p[0], Y: p[1] };
+      };
+      for (var y = cy - r; y <= cy + r; y += spacing) {
+        var p1 = transform2(cx - r, y);
+        var p2 = transform2(cx + r, y);
+        addLine(p1, p2, function(d, l) { return -depth; });
+      }
+    } else if (config.textureType == "Sine Ripple") {
+      var phase = 0;
+      for (var y = cy - r; y <= cy + r; y += spacing) {
+        var p1 = transform(cx - r, y);
+        var p2 = transform(cx + r, y);
+        var currentPhase = phase;
+        addLine(p1, p2, function(d, l) {
+          return -depth + amplitude * Math.sin(d * 2 * Math.PI / (spacing * 2) + currentPhase);
+        });
+        phase += Math.PI / 4;
+      }
+    } else if (config.textureType == "Radial Ripple") {
+      var maxRings = Math.ceil(r / spacing);
+      for (var ring = 1; ring <= maxRings; ring++) {
+        var ringRadius = ring * spacing;
+        var circumference = 2 * Math.PI * ringRadius;
+        var numPts = Math.max(12, Math.ceil(circumference / (spacing * 0.5)));
+        var pts = [];
+        for (var a = 0; a <= numPts; a++) {
+          var theta = (a / numPts) * 2 * Math.PI;
+          var px = cx + ringRadius * Math.cos(theta);
+          var py = cy + ringRadius * Math.sin(theta);
+          var rz = ringRadius;
+          var z = -depth + amplitude * Math.sin(rz * Math.PI / spacing);
+          pts.push({ X: px, Y: py, Z: z });
+        }
+        // Clip: check each point against boundary
+        var clipped = [];
+        for (var a = 0; a < pts.length; a++) {
+          var isInside = false;
+          for (var b = 0; b < boundaryInset.length; b++) {
+            if (pointInPolygon({ X: pts[a].X, Y: pts[a].Y }, boundaryInset[b])) {
+              isInside = true;
+              break;
+            }
+          }
+          if (isInside) clipped.push(pts[a]);
+          else if (clipped.length >= 2) {
+            var geo = new THREE.Geometry();
+            for (var v = 0; v < clipped.length; v++) {
+              geo.vertices.push(new THREE.Vector3(clipped[v].X, clipped[v].Y, clipped[v].Z));
+            }
+            var line = new THREE.Line(geo, material);
+            line.position.set(config.toolpath.position.x, config.toolpath.position.y, 0);
+            textureGrp.add(line);
+            clipped = [];
+          } else clipped = [];
+        }
+        if (clipped.length >= 2) {
+          var geo = new THREE.Geometry();
+          for (var v = 0; v < clipped.length; v++) {
+            geo.vertices.push(new THREE.Vector3(clipped[v].X, clipped[v].Y, clipped[v].Z));
+          }
+          var line = new THREE.Line(geo, material);
+          line.position.set(config.toolpath.position.x, config.toolpath.position.y, 0);
+          textureGrp.add(line);
+        }
+      }
+    } else if (config.textureType == "Random Stipple") {
+      var area = (r * 2) * (r * 2);
+      var numPoints = Math.max(10, Math.round(area / (spacing * spacing)));
+      for (var n = 0; n < numPoints; n++) {
+        var px = (bounds.minX + Math.random() * (bounds.maxX - bounds.minX));
+        var py = (bounds.minY + Math.random() * (bounds.maxY - bounds.minY));
+        var pz = depth * (0.2 + 0.8 * Math.random());
+        addPoint(px, py, pz);
+      }
+    }
+    return textureGrp;
+  }
+
+  function workerPocketRasterPath(config) {
+    var pocketGrp = new THREE.Group();
+    var clipperPaths = workerGetClipperPaths(config.toolpath);
+    var boundary = workerSimplifyPolygons(clipperPaths);
+    if (boundary.length < 1) {
+      console.error("Pocket Raster: Clipper Simplification Failed");
+      return pocketGrp;
+    }
+    var boundaryInset = workerGetInflatePath(boundary, -config.offset);
+    if (boundaryInset.length < 1) boundaryInset = boundary;
+
+    var bounds = clipperBounds(boundaryInset);
+    var cx = (bounds.minX + bounds.maxX) / 2;
+    var cy = (bounds.minY + bounds.maxY) / 2;
+    var lineDistance = config.offset * 2; // line spacing = tool diameter
+    var cutwidth = ((config.offset * 2) * (config.stepover / 100));
+    if (cutwidth > 0) lineDistance = cutwidth;
+    var angle = config.angle || 0;
+    var r = dist(cx, cy, bounds.minX, bounds.minY) + lineDistance;
+
+    var m = mat3.fromTranslation([], [cx, cy]);
+    m = mat3.rotate([], m, angle * Math.PI / 180);
+    m = mat3.translate([], m, [-cx, -cy]);
+    var makePoint = function(x, y) {
+      var p = vec2.transformMat3([], [x, y], m);
+      return { X: p[0], Y: p[1] };
+    };
+
+    var material = new THREE.LineBasicMaterial({ color: toolpathColor, transparent: true, opacity: 1 });
+
+    // Generate scan lines (same approach as fillPath)
+    var scan = [];
+    for (var y = cy - r; y < cy + r; y += lineDistance * 2) {
+      scan.push(makePoint(cx - r, y));
+      scan.push(makePoint(cx + r, y));
+      scan.push(makePoint(cx + r, y + lineDistance));
+      scan.push(makePoint(cx - r, y + lineDistance));
+    }
+
+    var separated = separateTabs(scan, boundaryInset);
+    for (var s = 1; s < separated.length; s += 2) {
+      var path = separated[s];
+      if (path.length < 2) continue;
+      // Duplicate each path for each Z layer
+      for (var j = config.zdepth; j > config.zstart; j -= config.zstep) {
+        var zval = -j;
+        if (zval > -config.zdepth) zval = -config.zdepth;
+        var geo = new THREE.Geometry();
+        for (var v = 0; v < path.length; v++) {
+          geo.vertices.push(new THREE.Vector3(path[v].X, path[v].Y, zval));
+        }
+        var line = new THREE.Line(geo, material);
+        line.position.set(config.toolpath.position.x, config.toolpath.position.y, 0);
+        pocketGrp.add(line);
+      }
+    }
+
+    pocketGrp.children = pocketGrp.children.reverse();
+    return pocketGrp;
+  }
 
   workerDragknifePath = function(config) { //}, infobject, inflateVal, zstep, zdepth) {
     var dragknifeGrp = new THREE.Group();
