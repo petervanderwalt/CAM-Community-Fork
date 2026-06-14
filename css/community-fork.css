@@ -3,7 +3,11 @@
  * Gradually replacing bloated Metro4 defaults.
  */
 
-/* ── Modal container ── */
+/* ── Modal container (above sidebar z-index 5000) ── */
+#statusmodal {
+  z-index: 6000 !important;
+}
+
 #statusmodal .dialog-content {
   padding: 8px 16px;
 }
