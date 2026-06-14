@@ -290,6 +290,51 @@ function setupJob(i) {
         </td>
       </tr>
     </table>
+    <table class="table striped compact inputtexture">
+      <tr>
+        <td style="width:120px">Texture Type</td>
+        <td>
+          <div class="input-addon">
+            <select class="cam-form-field" id="ttexturetype` + i + `" objectseq="` + i + `" style="width:100%;">
+              <option>Linear Sweep</option>
+              <option>Crosshatch</option>
+              <option>Peck Grid</option>
+              <option>Diamond Plate</option>
+              <option>Sine Ripple</option>
+              <option>Radial Ripple</option>
+              <option>Random Stipple</option>
+            </select>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>Spacing / Resolution</td>
+        <td>
+          <div class="input-addon">
+            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="2" id="ttexturespacing` + i + `" objectseq="` + i + `" min="0.1" step="any">
+            <span class="input-addon-label-right">mm</span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>Amplitude / Z Variation</td>
+        <td>
+          <div class="input-addon">
+            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="0.5" id="ttextureamplitude` + i + `" objectseq="` + i + `" min="0" step="any">
+            <span class="input-addon-label-right">mm</span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>Pattern Angle</td>
+        <td>
+          <div class="input-addon">
+            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="0" id="ttextureangle` + i + `" objectseq="` + i + `" min="0" max="180" step="any">
+            <span class="input-addon-label-right">deg</span>
+          </div>
+        </td>
+      </tr>
+    </table>
     <table class="table striped compact">
       <tr class="inputcnc inputpocket inputtooldia inputdrill inputplotter">
         <td style="width:120px">Endmill / Pen Diameter</td>
@@ -418,49 +463,6 @@ function setupJob(i) {
             <span class="input-addon-label-left"><span class="fas fa-arrow-down"></span></span>
             <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="300" id="tplungespeed` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm/min</span>
-          </div>
-        </td>
-      </tr>
-      <tr class="inputtexture">
-        <td>Texture Type</td>
-        <td>
-          <div class="input-addon">
-            <select class="cam-form-field" id="ttexturetype` + i + `" objectseq="` + i + `" style="width:100%;">
-              <option>Linear Sweep</option>
-              <option>Crosshatch</option>
-              <option>Peck Grid</option>
-              <option>Diamond Plate</option>
-              <option>Sine Ripple</option>
-              <option>Radial Ripple</option>
-              <option>Random Stipple</option>
-            </select>
-          </div>
-        </td>
-      </tr>
-      <tr class="inputtexture">
-        <td>Spacing / Resolution</td>
-        <td>
-          <div class="input-addon">
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="2" id="ttexturespacing` + i + `" objectseq="` + i + `" min="0.1" step="any">
-            <span class="input-addon-label-right">mm</span>
-          </div>
-        </td>
-      </tr>
-      <tr class="inputtexture">
-        <td>Amplitude / Z Variation</td>
-        <td>
-          <div class="input-addon">
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="0.5" id="ttextureamplitude` + i + `" objectseq="` + i + `" min="0" step="any">
-            <span class="input-addon-label-right">mm</span>
-          </div>
-        </td>
-      </tr>
-      <tr class="inputtexture">
-        <td>Pattern Angle</td>
-        <td>
-          <div class="input-addon">
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="0" id="ttextureangle` + i + `" objectseq="` + i + `" min="0" max="180" step="any">
-            <span class="input-addon-label-right">deg</span>
           </div>
         </td>
       </tr>
