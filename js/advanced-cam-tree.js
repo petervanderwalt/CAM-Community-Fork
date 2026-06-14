@@ -35,7 +35,7 @@ function fillTree() {
   if (toolpathsInScene.length > 0) {
 
     $('#generatetpgcode').prop('disabled', false);
-    $("#generatetpgcode").addClass('success');
+    $('#generatetpgcode').addClass('success');
 
     var table = `<table class="jobsetuptable" style="width: 100%" id="toolpathstable">`
     $('#toolpathtree').append(table)
@@ -47,7 +47,7 @@ function fillTree() {
         if (toolpathsInScene[i].userData.camOperation) {
           operation = toolpathsInScene[i].userData.camOperation
         } else {
-          operation = "not configured <i class='fas fa-times fa-fw fg-red'></i>"
+          operation = "not configured <i class='fas fa-times fa-fw cf-text-danger'></i>"
         }
 
         var toolp = `<tr class="jobsetupfile" id="toolpathrow` + i + `">
@@ -64,48 +64,41 @@ function fillTree() {
                     </tr>
                     <tr>
                     <td>
-                    <div class="toolbar mb-0">
+                    <div class="cf-toolbar">
                     `
 
-        toolp += `<button style="width: 60px;" class="tool-button primary" data-tooltip="tooltip" data-placement="bottom" title="Configure toolpath" onclick="setupJob(` + i + `);"><i class="fas fa-sliders-h"></i> Edit</button>`
-
-        toolp += `</div><div class="toolbar ml-1 mb-0">`
+        toolp += `<button class="cf-btn cf-btn-primary cf-btn-icon" title="Configure toolpath" onclick="setupJob(` + i + `);"><i class="fas fa-sliders-h"></i></button>`
 
         if (i > 0) {
-          toolp += `<button class="tool-button success" data-tooltip="tooltip" data-placement="bottom" title="Move up" onclick="moveOp(` + i + `, -1); fillTree();"><i class="fa fa-arrow-up fa-fw" aria-hidden="true"></i></button>`
+          toolp += `<button class="cf-btn cf-btn-green cf-btn-icon" title="Move up" onclick="moveOp(` + i + `, -1); fillTree();"><i class="fa fa-arrow-up fa-fw"></i></button>`
         } else {
-          toolp += `<button class="tool-button success disabled" data-tooltip="tooltip" data-placement="bottom" title="Move up" onclick="moveOp(` + i + `, -1); fillTree();"><i class="fa fa-arrow-up fa-fw" aria-hidden="true"></i></button>`
+          toolp += `<button class="cf-btn cf-btn-green cf-btn-icon cf-disabled" title="Move up" disabled><i class="fa fa-arrow-up fa-fw"></i></button>`
         }
 
         if (i < toolpathsInScene.length - 1) {
-          toolp += `<button class="tool-button success" data-tooltip="tooltip" data-placement="bottom" title="Move down" onclick="moveOp(` + i + `, 1); fillTree();"><i class="fa fa-arrow-down fa-fw" aria-hidden="true"></i></button>`
+          toolp += `<button class="cf-btn cf-btn-green cf-btn-icon" title="Move down" onclick="moveOp(` + i + `, 1); fillTree();"><i class="fa fa-arrow-down fa-fw"></i></button>`
         } else {
-          toolp += `<button class="tool-button success  disabled" data-tooltip="tooltip" data-placement="bottom" title="Move down" onclick="moveOp(` + i + `, 1); fillTree();"><i class="fa fa-arrow-down fa-fw" aria-hidden="true"></i></button>`
+          toolp += `<button class="cf-btn cf-btn-green cf-btn-icon cf-disabled" title="Move down" disabled><i class="fa fa-arrow-down fa-fw"></i></button>`
         }
 
-        toolp += `</div><div class="toolbar ml-1 mb-0">`
+        toolp += `<span style="flex:1;min-width:4px;"></span>`
 
-        toolp += `<button class="tool-button secondary" data-tooltip="tooltip" data-placement="bottom" title="Reselect toolpaths" onclick="setSelectionFromToolPath(` + i + `)"><i class="far fa-object-group fa-fw"></i></button>`
-
-        toolp += `</div><div class="toolbar ml-1 mb-0">`
-
+        toolp += `<button class="cf-btn cf-btn-gray cf-btn-icon" title="Reselect toolpaths" onclick="setSelectionFromToolPath(` + i + `)"><i class="far fa-object-group fa-fw"></i></button>`
 
         if (toolpathsInScene[i].userData.visible) {
-          toolp += `<button class="tool-button warning" data-tooltip="tooltip" data-placement="bottom" title="Hide toolpath and exclude from G-Code generation" onclick="toggleToolpathVisibility(` + i + `, false);"><i class="fa fa-fw fa-eye-slash" aria-hidden="true"></i></button>`
+          toolp += `<button class="cf-btn cf-btn-orange cf-btn-icon" title="Hide toolpath, exclude from G-Code" onclick="toggleToolpathVisibility(` + i + `, false);"><i class="fa fa-fw fa-eye-slash"></i></button>`
         } else {
-          toolp += `<button class="tool-button alert" data-tooltip="tooltip" data-placement="bottom" title="Show toolpath and include in G-Code generation" onclick="toggleToolpathVisibility(` + i + `, true);"><i class="fa fa-fw fa-eye" aria-hidden="true"></i></button>`
+          toolp += `<button class="cf-btn cf-btn-orange cf-btn-icon" title="Show toolpath, include in G-Code" onclick="toggleToolpathVisibility(` + i + `, true);"><i class="fa fa-fw fa-eye"></i></button>`
         }
 
-        toolp += `<button class="tool-button alert" data-tooltip="tooltip" data-placement="bottom" title="Delete toolpath" onclick="storeUndo(); toolpathsInScene.splice('` + i + `', 1); fillTree();"><i class="fa fa-times fa-fw" aria-hidden="true"></i></button>`
+        toolp += `<button class="cf-btn cf-btn-red cf-btn-icon" title="Delete toolpath" onclick="storeUndo(); toolpathsInScene.splice('` + i + `', 1); fillTree();"><i class="fa fa-times fa-fw"></i></button>`
 
         toolp += `</div>`
 
         toolp += `
-            <span class="tally alert" style="display: none; margin-top: 6px;" id="toolpathSpinner` + i + `"><i class="fas fa-spinner fa-pulse"></i><small> calculating...</small></span>
-                    </ul>
+            <div class="cf-spinner-label" id="toolpathSpinner` + i + `"><i class="fas fa-spinner fa-pulse"></i> calculating...</div>
                     </td>
                     </tr>
-
                   </table>
                 </td>
                 </tr>
@@ -133,7 +126,7 @@ function fillTree() {
     }
 
   } else {
-    var instructions = `<p class="text-secondary text-center mt-3">Please select some Vectors by clicking them in the viewer or using the Documents tree above. Hold down Ctrl to select multiples, Ctrl+A for Select-All, etc. <br>Add them to a toolpath using the <kbd class="bg-gray"> <i class="fa fa-plus" aria-hidden="true"></i> Create Toolpath</kbd> button</p>`
+    var instructions = `<p class="cf-text-muted cf-text-center cf-mt-2">Select vectors in the viewer or Documents tree (Ctrl+click for multiples, Ctrl+A for All).<br>Then use the <b>Add Toolpath</b> button above.</p>`
     $('#toolpathtree').append(instructions);
     $('#generatetpgcode').prop('disabled', true);
     $("#generatetpgcode").removeClass('success');
@@ -152,4 +145,6 @@ function fillTree() {
     var data = $this.data();
     toolpathsInScene[data.id].name = $this.text();
   });
+
+  $(document).trigger('treeUpdated');
 }

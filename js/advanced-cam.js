@@ -139,13 +139,13 @@ function remJob(id) {
   if (toolpath.children.length == 0) {
     var message = `Toolpath Container is empty.  Would you like to remove it.`
 
-    Metro.dialog.create({
+    cfDialog({
       width: 500,
       title: "Empty Toolpath.",
       content: "<div>Toolpath container is empty.  Would you like to remove it?</div>",
       actions: [{
           caption: "<i class=\"far fa-fw fa-save\"></i>Remove",
-          cls: "js-dialog-close success",
+          cls: "success",
           onclick: function() {
             toolpathsInScene.splice(id, 1);
             fillTree();
@@ -153,7 +153,7 @@ function remJob(id) {
         },
         {
           caption: "<i class=\"far fa-fw fa-file\"></i>Keep",
-          cls: "js-dialog-close success",
+          cls: "success",
           onclick: function() {}
         }
       ]

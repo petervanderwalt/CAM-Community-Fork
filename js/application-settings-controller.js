@@ -13,6 +13,7 @@ function initLocalStorage() {
   settingsOpen.addEventListener('change', restoreSettingsLocal, false);
   $('#savesettings').on('click', function() {
     saveSettingsLocal();
+    cfModalClose('settingsmodal');
   });
   checkSettingsLocal();
 }
@@ -143,7 +144,7 @@ function checkSettingsLocal() {
     // console.log(`<b>MISSING CONFIG: You need to configure your setup. </b>. Click Edit, <a href='#' onclick='Metro.dialog.open('#settingsmodal');'><kbd>Settings <i class="fa fa-cogs"></i></kbd></a> on the top menu bar, and work through all the options`, errorcolor, "settings");
     // $("#settingsmodal").modal("show");
     setTimeout(function() {
-      Metro.dialog.open('#settingsmodal');
+cfModalOpen('settingsmodal');
     }, 1000)
   }
 
@@ -368,9 +369,10 @@ $(document).ready(function() {
   var modal = `
   <!-- Settings Modal -->
 
-  <div class="dialog dark" data-overlay-click-close="true" data-role="dialog" id="settingsmodal" data-width="830" data-to-top="true">
-    <div class="dialog-title">Application Settings</div>
-    <div class="dialog-content" style="max-height: calc(100vh - 200px);overflow-y: auto; overflow-x: hidden;">
+  <div class="cf-modal-overlay" id="settingsmodal-overlay">
+    <div class="cf-modal" id="settingsmodal" style="max-width:830px;">
+      <div class="cf-modal-title">Application Settings <span class="cf-modal-close" onclick="cfModalClose('settingsmodal')">&times;</span></div>
+      <div class="cf-modal-content" style="max-height: calc(100vh - 200px);overflow-y: auto; overflow-x: hidden;">
       <form>
 
         <div>
@@ -537,11 +539,12 @@ $(document).ready(function() {
           </ul>
         </form>
     </div>
-    <div class="dialog-actions">
+    <div class="cf-modal-footer">
 
-      <button class="button secondary outline js-dialog-close">Cancel</button>
-      <button id="savesettings" type="button" class="button js-dialog-close success">Save</button>
+      <button class="cf-btn" onclick="cfModalClose('settingsmodal')">Cancel</button>
+      <button id="savesettings" type="button" class="cf-btn cf-btn-green">Save</button>
     </div>
+  </div>
   </div>
   <!-- #settingsmodal -->
   `

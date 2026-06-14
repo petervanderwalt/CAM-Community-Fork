@@ -48,20 +48,20 @@ function loadLastClosedOnPageload() {
   if (lastWorkspace) {
     if (Object.size(JSON.parse(lastWorkspace).objects) > 0 || Object.size(JSON.parse(lastWorkspace).toolpaths) > 0) {
 
-      Metro.dialog.create({
+      cfDialog({
         width: 500,
         title: "Found a recoverable Project",
         content: "<div>Would you like to recover the previously used Project, or would you like to start with a clean New Project?</div>",
         actions: [{
             caption: "<i class=\"far fa-fw fa-save\"></i>Recover last used Project",
-            cls: "js-dialog-close success",
+            cls: "success",
             onclick: function() {
               parseLoadWorkspace(lastWorkspace, true)
             }
           },
           {
             caption: "<i class=\"far fa-fw fa-file\"></i>Start with a New Project",
-            cls: "js-dialog-close success",
+            cls: "success",
             onclick: function() {
               // console.log("Starting wtih a clean workspace")
             }
@@ -139,27 +139,23 @@ function storeRedo() {
 // Workspace Export Functions
 
 function exportWorkspace() {
-  Metro.dialog.create({
+  cfDialog({
     title: "Save Workspace (Export .OBC file)",
-    content: `<div class="form-group">
-           <label>Filename:</label>
-           <input type="text" id="workspaceFilename" placeholder="` + 'workspace-' + date.yyyymmdd() + '.obc' + `" value="` + 'workspace-' + date.yyyymmdd() + '.obc' + `"/>
-           <small class="text-muted">What would you like to name the workspace export?</small>
-       </div>
-    `,
+    width: 420,
+    content: '<label class="cf-dialog-label">Filename:</label>' +
+             '<input type="text" class="cf-dialog-input" id="workspaceFilename" value="' + 'workspace-' + date.yyyymmdd() + '.obc' + '"/>' +
+             '<small class="cf-dialog-hint">What would you like to name the workspace export?</small>',
     actions: [{
-        caption: "<span class='fas fa-download fa-fw'></span> Save",
-        cls: "js-dialog-close primary",
+        caption: "<span class='fas fa-download'></span> Save",
+        cls: "primary",
         onclick: function() {
           saveExportWorkspace($('#workspaceFilename').val());
         }
       },
       {
         caption: "Cancel",
-        cls: "js-dialog-close",
-        onclick: function() {
-          //
-        }
+        cls: "",
+        onclick: function() {}
       }
     ]
   });

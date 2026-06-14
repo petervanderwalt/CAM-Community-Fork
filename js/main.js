@@ -9,6 +9,72 @@ var warncolor = '#ff6600';
 var debug = false;
 var activeObject, fileName, notify;
 
+// ── Modal system (replaces Metro4 dialogs) ──
+function cfModalOpen(id) {
+  $('body').addClass('cf-modal-open');
+  $('#' + id).closest('.cf-modal-overlay').addClass('open');
+}
+function cfModalClose(id) {
+  $('#' + id).closest('.cf-modal-overlay').removeClass('open');
+  $('body').removeClass('cf-modal-open');
+}
+function cfModalIsOpen(id) {
+  return $('#' + id).closest('.cf-modal-overlay').hasClass('open');
+}
+// Close modal on overlay click
+$(document).on('click', '.cf-modal-overlay', function(e) {
+  if ($(e.target).is('.cf-modal-overlay')) {
+    $(this).find('.cf-modal').each(function() {
+      cfModalClose($(this).attr('id'));
+    });
+  }
+});
+// Close modal on Escape key
+$(document).on('keydown', function(e) {
+  if (e.key === 'Escape') {
+    $('.cf-modal-overlay.open').find('.cf-modal').each(function() {
+      cfModalClose($(this).attr('id'));
+    });
+  }
+});
+
+// Dynamic dialog (replaces Metro.dialog.create)
+function cfDialog(opts) {
+  var id = 'cf-dialog-' + Date.now();
+  function mapCls(cls) {
+    if (!cls) return 'gray';
+    if (cls.indexOf('primary') >= 0) return 'primary';
+    if (cls.indexOf('success') >= 0) return 'green';
+    return 'gray';
+  }
+  var html = '<div class="cf-modal-overlay" id="' + id + '-overlay">';
+  html += '<div class="cf-modal" id="' + id + '" style="max-width:' + (opts.width || 480) + 'px;">';
+  html += '<div class="cf-modal-title">' + (opts.title || '') + '<span class="cf-modal-close" onclick="cfModalClose(\'' + id + '\')">&times;</span></div>';
+  html += '<div class="cf-modal-content">' + (opts.content || '') + '</div>';
+  if (opts.actions && opts.actions.length) {
+    html += '<div class="cf-modal-footer">';
+    for (var a = 0; a < opts.actions.length; a++) {
+      var act = opts.actions[a];
+      html += '<button class="cf-btn cf-btn-' + mapCls(act.cls) + '" id="' + id + '-act-' + a + '">' + (act.caption || '') + '</button>';
+    }
+    html += '</div>';
+  }
+  html += '</div></div>';
+  $('body').append(html);
+  // Bind action click handlers
+  if (opts.actions) {
+    for (var a = 0; a < opts.actions.length; a++) {
+      (function(idx) {
+        $('#' + id + '-act-' + idx).on('click', function() {
+          if (opts.actions[idx].onclick) opts.actions[idx].onclick();
+          cfModalClose(id);
+        });
+      })(a);
+    }
+  }
+  cfModalOpen(id);
+}
+
 // Place all document.ready tasks into functions and ONLY run the functions from doument.ready
 $(document).ready(function() {
   // Intialise
@@ -63,6 +129,42 @@ $(document).ready(function() {
   $(document).on('click', '.sidebar-handle', function(e) {
     e.preventDefault();
     $('#sidebar-overlay').toggleClass('sidebar-closed sidebar-open');
+    $('#cf-float-tp').toggleClass('sidebar-closed sidebar-open');
+  });
+
+  // Update sidebar badge counts
+  function updateSidebarBadges() {
+    var docCount = typeof objectsInScene !== 'undefined' ? objectsInScene.length : 0;
+    var tpCount = typeof toolpathsInScene !== 'undefined' ? toolpathsInScene.length : 0;
+    $('#badge-docs').text(docCount).toggle(docCount > 0);
+    $('#badge-tps').text(tpCount).toggle(tpCount > 0);
+  }
+  // Call after tree changes
+  $(document).on('treeUpdated', updateSidebarBadges);
+  // Initial call
+  setTimeout(updateSidebarBadges, 100);
+
+  // Dropdown toggle for Add Toolpath split buttons
+  function toggleTPmenu(btn) {
+    var menu = $('#toolpathsmenu');
+    var rect = btn[0].getBoundingClientRect();
+    menu.removeClass('cf-dropdown-down cf-dropdown-up');
+    if (btn.is('#floatAddJobMenuBtn')) {
+      menu.addClass('cf-dropdown-up').css({ right: window.innerWidth - rect.right, bottom: window.innerHeight - rect.top });
+    } else {
+      menu.addClass('cf-dropdown-down').css({ top: rect.top + rect.height + window.scrollY, left: rect.left + window.scrollX });
+    }
+    menu.toggleClass('open');
+  }
+  $(document).on('click', '#addJobMenuBtn, #floatAddJobMenuBtn', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleTPmenu($(this));
+  });
+  $(document).on('click', function(e) {
+    if (!$(e.target).closest('#toolpathsmenu').length && !$(e.target).closest('#addJobMenuBtn, #floatAddJobMenuBtn').length) {
+      $('#toolpathsmenu').removeClass('open');
+    }
   });
 
 }); // End of document.ready
@@ -275,32 +377,26 @@ function loadFile(f) {
 }
 
 function saveFile() {
-  Metro.dialog.create({
+  cfDialog({
     title: "Save GCODE",
-    clsDialog: "dark",
-    content: `<div class="form-group">
-           <label>Filename:</label>
-           <input type="text" id="gcodeFilename" contenteditable="true" placeholder="` + 'file-' + date.yyyymmdd() + '.gcode' + `" value="` + 'file-' + date.yyyymmdd() + '.gcode' + `"/>
-           <small class="text-muted">What would you like to name the gcode export?</small>
-       </div>
-    `,
+    width: 420,
+    content: '<label class="cf-dialog-label">Filename:</label>' +
+             '<input type="text" class="cf-dialog-input" id="gcodeFilename" value="' + 'file-' + date.yyyymmdd() + '.gcode' + '"/>' +
+             '<small class="cf-dialog-hint">What would you like to name the gcode export?</small>',
     actions: [{
-        caption: "<span class='fas fa-download fa-fw'></span> Save",
-        cls: "js-dialog-close primary",
+        caption: "<span class='fas fa-download'></span> Save",
+        cls: "primary",
         onclick: function() {
           saveFileGcode($('#gcodeFilename').val());
         }
       },
       {
         caption: "Cancel",
-        cls: "js-dialog-close",
-        onclick: function() {
-          //
-        }
+        cls: "",
+        onclick: function() {}
       }
     ]
   });
-
 }
 
 function saveFileGcode(filename) {
@@ -317,25 +413,25 @@ function saveFileGcode(filename) {
 function previewFile() {
   var textToWrite = prepgcodefile().split("\n");
 
-  var content = `<div style="overflow-y: auto; height: calc(100vh - 430px); ">`
+  var content = `<div style="overflow-y: auto; max-height: calc(100vh - 430px);">`
   for (i = 0; i < textToWrite.length; i++) {
     content += `<code>` + textToWrite[i] + `</code><br>`
   }
-  content += `</code></div>`
+  content += `</div>`
 
-  Metro.dialog.create({
+  cfDialog({
     title: "Preview GCODE",
     content: content,
     actions: [{
-        caption: "<span class='fas fa-download fa-fw'></span> Save",
-        cls: "js-dialog-close primary",
+        caption: "<span class='fas fa-download'></span> Save",
+        cls: "primary",
         onclick: function() {
           saveFile();
         }
       },
       {
         caption: "Cancel",
-        cls: "js-dialog-close",
+        cls: "",
         onclick: function() {
           //
         }

@@ -237,7 +237,7 @@ function inflatedReplacer(key, value) {
 function setupJob(i) {
 
   // $('#statusmodal').modal('show');
-  Metro.dialog.open('#statusmodal')
+  cfModalOpen('statusmodal')
   $('#statusTitle').empty();
   $('#statusTitle').html('Configure Toolpath: ');
   $('#statusBody').empty();
@@ -249,7 +249,7 @@ function setupJob(i) {
     <table class="table striped compact">
       <tr>
         <td style="width:120px">Name:</td>
-        <td><input data-role="input" autofocus type="text" class="cam-form-field" value="` + toolpathsInScene[i].name + `" id="tOpName` + i + `" objectseq="` + i + `"></td>
+        <td><input autofocus type="text" class="cam-form-field" value="` + toolpathsInScene[i].name + `" id="tOpName` + i + `" objectseq="` + i + `"></td>
       </tr>
       <tr>
         <td>Operation:</td>
@@ -311,7 +311,7 @@ function setupJob(i) {
         <td>Spacing / Resolution</td>
         <td>
           <div class="input-addon">
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="2" id="ttexturespacing` + i + `" objectseq="` + i + `" min="0.1" step="any">
+            <input type="number" class="cam-form-field" value="2" id="ttexturespacing` + i + `" objectseq="` + i + `" min="0.1" step="any">
             <span class="input-addon-label-right">mm</span>
           </div>
         </td>
@@ -320,7 +320,7 @@ function setupJob(i) {
         <td>Amplitude / Z Variation</td>
         <td>
           <div class="input-addon">
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="0.5" id="ttextureamplitude` + i + `" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" value="0.5" id="ttextureamplitude` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm</span>
           </div>
         </td>
@@ -329,7 +329,7 @@ function setupJob(i) {
         <td>Pattern Angle</td>
         <td>
           <div class="input-addon">
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="0" id="ttextureangle` + i + `" objectseq="` + i + `" min="0" max="180" step="any">
+            <input type="number" class="cam-form-field" value="0" id="ttextureangle` + i + `" objectseq="` + i + `" min="0" max="180" step="any">
             <span class="input-addon-label-right">deg</span>
           </div>
         </td>
@@ -341,7 +341,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><img class="fa-fw" src="images/endmilldia.svg" width="16px" height="16px"></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="6.35" id="ttooldia` + i + `" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" value="6.35" id="ttooldia` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm</span>
           </div>
         </td>
@@ -351,7 +351,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><img class="fa-fw" src="images/endmilldia.svg" width="16px" height="16px"></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="40" id="tstepover` + i + `" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" value="40" id="tstepover` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">%</span>
           </div>
         </td>
@@ -361,7 +361,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><span class="fas fa-arrows-alt-v"></span></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="10" id="tclearanceHeight` + i + `" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" value="10" id="tclearanceHeight` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm</span>
           </div>
         </td>
@@ -371,7 +371,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><img class="fa-fw" src="images/dragoffset.svg" width="16px" height="16px"></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="1" id="tdragoffset` + i + `" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" value="1" id="tdragoffset` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm</span>
           </div>
         </td>
@@ -381,7 +381,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><span class="fas fa-tachometer-alt"></span></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="100" id="tpwr` + i + `" objectseq="` + i + `" min="1" max="100" step="any">
+            <input type="number" class="cam-form-field" value="100" id="tpwr` + i + `" objectseq="` + i + `" min="1" max="100" step="any">
             <span class="input-addon-label-right">%</span>
           </div>
         </td>
@@ -391,7 +391,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><span class="fas fa-tachometer-alt"></span></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="1000" id="trpm` + i + `" objectseq="` + i + `" min="1" max="36000" step="any">
+            <input type="number" class="cam-form-field" value="1000" id="trpm` + i + `" objectseq="` + i + `" min="1" max="36000" step="any">
             <span class="input-addon-label-right">rpm</span>
           </div>
         </td>
@@ -401,7 +401,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><span class="fas fa-toolbox"></span></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="" id="tToolNumber` + i + `" objectseq="` + i + `" min="0" max="99" step="1" placeholder="1">
+            <input type="number" class="cam-form-field" value="" id="tToolNumber` + i + `" objectseq="` + i + `" min="0" max="99" step="1" placeholder="1">
             <span class="input-addon-label-right">T#</span>
           </div>
         </td>
@@ -411,7 +411,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><img class="fa-fw" src="images/kerf.svg" width="16px" height="16px"></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="0.1" id="tspotsize` + i + `" objectseq="` + i + `" min="0.1" max="5" step="any">
+            <input type="number" class="cam-form-field" value="0.1" id="tspotsize` + i + `" objectseq="` + i + `" min="0.1" max="5" step="any">
             <span class="input-addon-label-right">mm</span>
           </div>
         </td>
@@ -421,7 +421,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><img class="fa-fw" src="images/protractor.svg" width="16px" height="16px"></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="0" id="tfillAngle` + i + `" objectseq="` + i + `" min="0.1" max="5" step="any">
+            <input type="number" class="cam-form-field" value="0" id="tfillAngle` + i + `" objectseq="` + i + `" min="0.1" max="5" step="any">
             <span class="input-addon-label-right">deg</span>
           </div>
         </td>
@@ -431,7 +431,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><span class="fas fa-sort-amount-down"></span></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" id="tzstep` + i + `" value="1" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" id="tzstep` + i + `" value="1" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm</span>
           </div>
         </td>
@@ -441,7 +441,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><span class="fas fa-level-down-alt"></span></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" id="tzdepth` + i + `" value="6" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" id="tzdepth` + i + `" value="6" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm</span>
           </div>
         </td>
@@ -451,7 +451,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><span class="fas fa-exchange-alt"></span></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="1000" id="tspeed` + i + `" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" value="1000" id="tspeed` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm/min</span>
           </div>
         </td>
@@ -461,7 +461,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><span class="fas fa-arrow-down"></span></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="300" id="tplungespeed` + i + `" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" value="300" id="tplungespeed` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm/min</span>
           </div>
         </td>
@@ -471,7 +471,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><img class="fa-fw" src="images/kerf.svg" width="16px" height="16px"></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="1.2" id="tplasmakerf` + i + `" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" value="1.2" id="tplasmakerf` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm</span>
           </div>
         </td>
@@ -481,7 +481,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><span class="fas fa-meteor"></span></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="4" id="tplasmapierceheight` + i + `" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" value="4" id="tplasmapierceheight` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm</span>
           </div>
         </td>
@@ -491,7 +491,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><span class="far fa-clock"></span></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="1.5" id="tplasmapiercedelay` + i + `" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" value="1.5" id="tplasmapiercedelay` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">sec</span>
           </div>
         </td>
@@ -501,7 +501,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><span class="fas fa-arrows-alt-v"></span></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="1.5" id="tplasmazheight` + i + `" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" value="1.5" id="tplasmazheight` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm</span>
           </div>
         </td>
@@ -511,7 +511,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><span class="fas fa-drafting-compass"></span></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="5" id="tplasmaleadin` + i + `" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" value="5" id="tplasmaleadin` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm</span>
           </div>
         </td>
@@ -544,7 +544,7 @@ function setupJob(i) {
         <td>Pen Up S-Value</td>
         <td>
           <div class="input-addon">
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="255" id="tpenup` + i + `" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" value="255" id="tpenup` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">M3S</span>
           </div>
         </td>
@@ -553,7 +553,7 @@ function setupJob(i) {
         <td>Pen Down S-Value</td>
         <td>
           <div class="input-addon">
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="0" id="tpendown` + i + `" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" value="0" id="tpendown` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">M3S</span>
           </div>
         </td>
@@ -563,7 +563,7 @@ function setupJob(i) {
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><span class="fas fa-clock"></span></span>
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="500" id="tpentime` + i + `" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" value="500" id="tpentime` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">ms</span>
           </div>
         </td>
@@ -572,7 +572,7 @@ function setupJob(i) {
         <td>Pen Up Z</td>
         <td>
           <div class="input-addon">
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="5" id="tpenupz` + i + `" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" value="5" id="tpenupz` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm</span>
           </div>
         </td>
@@ -581,7 +581,7 @@ function setupJob(i) {
         <td>Pen Down Z</td>
         <td>
           <div class="input-addon">
-            <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="0" id="tpendownz` + i + `" objectseq="` + i + `" min="0" step="any">
+            <input type="number" class="cam-form-field" value="0" id="tpendownz` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm</span>
           </div>
         </td>
@@ -628,7 +628,7 @@ function setupJob(i) {
           <td>
             <div class="input-addon">
               <span class="input-addon-label-left"><span class="fas fa-indent"></span></span>
-              <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="0" id="tstartHeight` + i + `" objectseq="` + i + `" min="1" step="any">
+              <input type="number" class="cam-form-field" value="0" id="tstartHeight` + i + `" objectseq="` + i + `" min="1" step="any">
               <span class="input-addon-label-right">mm</span>
             </div>
           </td>
@@ -638,7 +638,7 @@ function setupJob(i) {
           <td>
             <div class="input-addon">
               <span class="input-addon-label-left"><span class="fas fa-sort-amount-down"></span></span>
-              <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="1" id="tPasses` + i + `" objectseq="` + i + `" min="1" step="any">
+              <input type="number" class="cam-form-field" value="1" id="tPasses` + i + `" objectseq="` + i + `" min="1" step="any">
               <span class="input-addon-label-right">x</span>
             </div>
           </td>
@@ -648,7 +648,7 @@ function setupJob(i) {
           <td>
             <div class="input-addon">
               <span class="input-addon-label-left"><span class="fas fa-text-height"></span></span>
-              <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="0" id="tabdepth` + i + `" objectseq="` + i + `" step="any">
+              <input type="number" class="cam-form-field" value="0" id="tabdepth` + i + `" objectseq="` + i + `" step="any">
               <span class="input-addon-label-right">mm</span>
             </div>
           </td>
@@ -658,7 +658,7 @@ function setupJob(i) {
           <td>
             <div class="input-addon">
               <span class="input-addon-label-left"><span class="fas fa-text-width"></span></span>
-              <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="6" id="tabWidth` + i + `" objectseq="` + i + `" min="0" step="any">
+              <input type="number" class="cam-form-field" value="6" id="tabWidth` + i + `" objectseq="` + i + `" min="0" step="any">
               <span class="input-addon-label-right">mm</span>
             </div>
           </td>
@@ -668,7 +668,7 @@ function setupJob(i) {
           <td>
             <div class="input-addon">
               <span class="input-addon-label-left"><span class="fas fa-ruler-horizontal"></span></span>
-              <input data-role="input" data-clear-button="false" type="number" class="cam-form-field" value="50" id="tabSpace` + i + `" objectseq="` + i + `" min="0" step="any">
+              <input type="number" class="cam-form-field" value="50" id="tabSpace` + i + `" objectseq="` + i + `" min="0" step="any">
               <span class="input-addon-label-right">mm</span>
             </div>
           </td>
@@ -676,7 +676,7 @@ function setupJob(i) {
       </table>
     </div>`
   $('#statusBody2').html(template2);
-  $('#statusFooter').html(`<button type="button" id="previewToolpathBtn" class="button success" onclick="toolpathPreview(` + i + `); fillTree();">Apply and Preview Toolpath </button><button class="button js-dialog-close">Close</button>`);
+  $('#statusFooter').html(`<button type="button" id="previewToolpathBtn" class="cf-btn cf-btn-green" onclick="toolpathPreview(` + i + `); fillTree();">Apply and Preview Toolpath </button><button class="cf-btn" onclick="cfModalClose('statusmodal')">Close</button>`);
   noMode(); // Default to NOOP
   $("#tOpName" + i).focus()
   Metro.init();

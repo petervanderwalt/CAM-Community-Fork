@@ -3,7 +3,7 @@ function toolpathPreview(i) {
   $('#validGcode').html("<i class='fas fa-times fa-fw fg-red'></i> No G-Code yet")
   $("#savetpgcode").addClass("disabled");
   $("#exportGcodeMenu").addClass("disabled");
-  Metro.dialog.close('#statusmodal')
+  cfModalClose('statusmodal')
   setTimeout(function() {
     drawToolpath(i);
   }, 200);

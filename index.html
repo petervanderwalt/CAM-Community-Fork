@@ -105,8 +105,9 @@
 			</span>
 			<div id="main-viewer" class="h-100" style="overflow:hidden;">
 					<div class="window drop-shadow" style="height: calc(100% - 10px); overflow: hidden;">
-						<div class="window-caption bg-gray" style="height: 28px; padding: 0 10px; line-height: 28px;">
-							<span style="font-family: 'Open Sans', Helvetica, Arial, sans-serif; font-size: 13px; color: #fff;">CAM Community Fork</span>
+						<div class="window-caption bg-gray" style="height: 28px; padding: 0 10px; line-height: 28px; display:flex;align-items:center;gap:10px;">
+							<span style="font-family: 'Open Sans', Helvetica, Arial, sans-serif; font-size: 13px; color: #fff;white-space:nowrap;">CAM Community Fork</span>
+
 						</div>
 						<div class="window-content pt-2" style="overflow:hidden; ">
 							<nav data-role="ribbonmenu">
@@ -173,8 +174,40 @@
 													</span>
 													<span class="caption">Grid</span>
 												</button>
+												<br>
+												<button class="ribbon-icon-button" onclick="resetView(object);">
+													<span class="icon">
+														<span class="fa fa-cube"></span>
+													</span>
+													<span class="caption">Object</span>
+												</button>
 											</div>
 											<span class="title">Zoom</span>
+										</div>
+										<div class="group">
+											<div class="ribbon-group">
+												<button class="ribbon-icon-button" onclick="simSpeed();">
+													<span class="icon">
+														<span class="fas fa-tachometer-alt"></span>
+													</span>
+													<span class="caption"><span id="simspeedval">1</span>x</span>
+												</button>
+												<br>
+												<button id="runSimBtn" class="ribbon-icon-button" onclick="sim(0)" disabled>
+													<span class="icon">
+														<span class="fas fa-fighter-jet"></span>
+													</span>
+													<span class="caption">Simulate</span>
+												</button>
+												<br>
+												<button id="stopSimBtn" class="ribbon-icon-button" onclick="simstop()" style="display:none;">
+													<span class="icon">
+														<span class="fas fa-stop"></span>
+													</span>
+													<span class="caption">Stop</span>
+												</button>
+											</div>
+											<span class="title">Simulate</span>
 										</div>
 										<div class="group">
 											<div class="ribbon-group">
@@ -194,7 +227,6 @@
 											</div>
 											<span class="title">Undo/Redo</span>
 										</div>
-
 
 									</div>
 									<div class="section" id="section-settings">
@@ -289,140 +321,119 @@
 
 
 						</div>
-						<div id="helpoverlay">
-							<kbd>Left Mouse</kbd> = Select / <kbd>Middle Mouse</kbd> = Orbit / <kbd>Right Mouse</kbd> = Pan / <kbd>Wheel</kbd> = Zoom / <kbd>Ctrl</kbd> = Multiple Select / <kbd>Del</kbd> = Delete Selected
-						</div>
-						<div id="simoverlay" class="text-center">
-							<button class="button dark drop-shadow" onclick="simSpeed();"><span class="icon"><span class="fas fa-tachometer-alt"></span></span><span class="caption"><span id="simspeedval">1</span>x</span></button>
-							<button id="runSimBtn" title="Run simulation" class="button dark drop-shadow" onclick="sim(0)" disabled><i class="fas fa-fighter-jet"></i> Simulate</button>&nbsp;
-							<button id="stopSimBtn" style="display: none;" title="Stop Sim" class="button dark drop-shadow" onclick="simstop()"><i class="fas fa-stop"></i> Stop Sim</button>&nbsp;
-							<button id="resetViewBtn" title="Stop Sim" class="button dark drop-shadow" onclick="resetView(object)"><i class="fas fa-stop"></i> Reset View</button>&nbsp;
-							<div class="text-left viewer-checkboxes drop-shadow">
-								<div data-role="collapse" data-collapsed="false" data-toggle-element="#collapse_toggle_1">
-									<input type="checkbox" data-role="checkbox" data-caption="Documents" checked data-style="2" id="view-docs">
-									<input type="checkbox" data-role="checkbox" data-caption="Toolpaths" checked data-style="2" id="view-toolpath">
-									<input type="checkbox" data-role="checkbox" data-caption="GCODE" checked data-style="2" id="view-gcode">
-								</div>
-							</div>
+
+						<div id="viewer-visibility-bar">
+							<label class="cf-visibility-check"><input type="checkbox" id="view-docs" checked><span class="cf-vis-label">Documents</span></label>
+							<label class="cf-visibility-check"><input type="checkbox" id="view-toolpath" checked><span class="cf-vis-label">Toolpaths</span></label>
+							<label class="cf-visibility-check"><input type="checkbox" id="view-gcode" checked><span class="cf-vis-label">GCODE</span></label>
 						</div>
 					</div>
 				</div>
 			</div>
 
+			<!-- Floating Add Toolpath (visible when sidebar closed) -->
+			<div id="cf-float-tp" class="sidebar-closed">
+				<div class="cf-split">
+					<button class="cf-btn" id="floatAddJobBtn" onclick="addJob(-1);" title="Add selected vectors to a new toolpath"><span class="fa fa-plus"></span> Add Toolpath</button>
+					<button class="cf-btn cf-split-toggle" id="floatAddJobMenuBtn">&#9662;</button>
+				</div>
+			</div>
+			<!-- Dropdown menu moved outside sidebar so both sidebar and floating split buttons can use it -->
+			<ul class="cf-dropdown" id="toolpathsmenu">
+			</ul>
+
 			<div id="sidebar-overlay" class="sidebar-closed">
 				<div class="sidebar-content">
 					<div class="sidebar-scroll">
-						<div id="renderDocuments" class="window drop-shadow">
-							<div class="window-caption bg-gray">
-								<i class="far fa-file-alt fa-fw ml-1 mr-1"></i>
-								<span class="title">1. Documents <span class="workspaceTitle"></span></span>
+						<div id="renderDocuments" class="cf-section">
+							<div class="cf-section-header">
+								<span class="cf-icon far fa-file-alt"></span>
+								<span>1. Documents <span class="workspaceTitle"></span></span>
 							</div>
-							<div id="selectoverlay" class="text-center mt-1">
-								<button class="button drop-shadow" id="selectAll"><span class="far fa-check-square"></span> All</button>
-								<button class="button drop-shadow" id="selectNone"><span class="far fa-square"></span> None</button>
-								<button class="button drop-shadow" id="selectInv"><span class="fas fa-check"></span> Invert</button>
-								<button class="button drop-shadow" id="selectDel"><span class="fas fa-trash"></span> Delete</button>
-							</div>
-							<div class="window-content p-1" style="overflow-y:scroll;">
-								<!-- Documents Here -->
-								<div class="pt-2" id="documentactivity" style="display: none;">
-									<center>
-										<h5>Please Wait </h5>
-										<div data-role="activity" data-type="ring" data-style="dark"></div>
-										<h6>Parsing Documents...</h6>
+							<div class="cf-section-body">
+								<div id="selectoverlay" class="cf-mb-1">
+									<span class="cf-btn-group">
+										<button class="cf-btn" id="selectAll"><span class="far fa-check-square"></span> All</button>
+										<button class="cf-btn" id="selectNone"><span class="far fa-square"></span> None</button>
+										<button class="cf-btn" id="selectInv"><span class="fas fa-check"></span> Invert</button>
+										<button class="cf-btn" id="selectDel"><span class="fas fa-trash"></span> Delete</button>
+									</span>
+								</div>
+
+								<div id="documentactivity" class="cf-hidden cf-text-center cf-p-2">
+									<h5 class="cf-mb-1" style="font-size:13px;color:#666;">Please Wait</h5>
+									<div class="cf-spinner"></div>
+									<h6 class="cf-mt-1" style="font-size:11px;color:#999;">Parsing Documents...</h6>
 								</div>
 
 								<div id="documentstree">
-									<div id="nodocuments" style="display:none;">
-										<p class="text-secondary text-center mt-3">Please load some vectors from DXF (Polylines) or SVG (Paths); or Images (Traceable); or insert a Shape, Icon or some Text using the built-in tools to get started
+									<div id="nodocuments" style="display:none;padding:8px;">
+										<p class="cf-text-muted">Please load some vectors from DXF (Polylines) or SVG (Paths); or Images (Traceable); or insert a Shape, Icon or some Text using the built-in tools to get started</p>
+										<p class="cf-text-center cf-mt-1">
+											<button class="cf-btn cf-btn-primary cf-btn-block" title="Open Drawing" onclick="$('#file').click();"><span class="far fa-folder-open"></span> Open Drawing</button>
 										</p>
-										<p class="text-center">
-											<button class="ob-button bg-success fg-white drop-shadow" style="width: 300px;" title="Open Drawing" onclick="$('#file').click();"><span class="far fa-folder-open fa-fw icon"></span>Open Drawing</button>
-										</p>
-
-
 									</div>
-									<ul data-role="treeview pl-0" id="left-tree-view">
+									<ul class="cf-tree" id="left-tree-view">
 									</ul>
 								</div>
-
-							</div>
-
-						</div>
-						<div class="window drop-shadow mt-2">
-							<div class="window-caption bg-gray">
-								<i class="fas fa-tasks fa-fw ml-1 mr-1"></i>
-								<span class="title">2. Configure Toolpaths</span>
-								<div class="buttons">
-
-								</div>
-							</div>
-							<div id="tpathoverlay" class="text-center mt-1">
-								<div class="split-button drop-shadow">
-									<button class="button" id="addJobBtn" onclick="addJob(-1);"><span class="icon fa-fw fa fa-plus"></span><span class="addJobBtn-text">Please select Vector(s) to create toolpaths</span></button>
-									<button class="split dropdown-toggle outline" id="addJobMenuBtn" display: none;></button>
-									<ul class="d-menu" data-role="dropdown" id="toolpathsmenu">
-										<!--  -->
-									</ul>
-								</div>
-
-							</div>
-
-							<div class="window-content p-1" style="overflow-y:scroll;">
-								<div class="pt-2" id="toolpathactivity" style="display: none;">
-									<center>
-										<h5>Please Wait </h5>
-										<div data-role="activity" data-type="ring" data-style="dark"></div>
-										<h6>Calculating Toolpaths...</h6>
-								</div>
-								<div id="toolpathtree">
-								</div>
-
 							</div>
 						</div>
 
-						<div class="window drop-shadow mt-2">
-							<div class="window-caption bg-gray">
-								<i class="fa fa-cubes fa-fw ml-1 mr-1"></i>
-								<span class="title">3. Create G-code</span>
-								<div class="buttons">
-								</div>
+						<div class="cf-section">
+							<div class="cf-section-header">
+								<span class="cf-icon fas fa-tasks"></span>
+								<span>2. Configure Toolpaths</span>
 							</div>
-							<div class="window-content p-1 text-center  mt-1" style="overflow-y:hidden;">
-								<button class="button drop-shadow" style="width: 300px;" title=" Generate G-Code" id="generatetpgcode" onclick="makeGcode();"><span class="fa fa-cubes fa-fw icon"></span>Generate G-Code</button>
+							<div class="cf-section-body">
+								<div id="tpathoverlay" class="cf-mb-1">
+									<div class="cf-split">
+										<button class="cf-btn cf-btn-primary" id="addJobBtn" onclick="addJob(-1);"><span class="fa fa-plus"></span><span class="cf-addjob-text">Add Toolpath</span></button>
+										<button class="cf-btn cf-btn-primary cf-split-toggle" id="addJobMenuBtn">&#9662;</button>
+									</div>
+								</div>
+
+								<div id="toolpathactivity" class="cf-hidden cf-text-center cf-p-2">
+									<h5 class="cf-mb-1" style="font-size:13px;color:#666;">Please Wait</h5>
+									<div class="cf-spinner"></div>
+									<h6 class="cf-mt-1" style="font-size:11px;color:#999;">Calculating Toolpaths...</h6>
+								</div>
+
+								<div id="toolpathtree"></div>
 							</div>
 						</div>
 
-						<div class="window drop-shadow mt-2">
-							<div class="window-caption bg-gray">
-								<i class="fa fa-save fa-fw ml-1 mr-1"></i>
-								<span class="title">4. Export G-code</span>
-								<div class="buttons">
-								</div>
+						<div class="cf-section">
+							<div class="cf-section-header">
+								<span class="cf-icon fa fa-cubes"></span>
+								<span>3. Create G-code</span>
 							</div>
-
-
-							<div class="window-content p-1 text-center  mt-1" style="overflow-y:hidden;">
-
-								<button class="button drop-shadow" title="Save G-Code" id="gcodesavebtn2" onclick="saveFile();"><span class="fa fa-save fa-fw icon"></span>Save G-Code</button>
-								<button class="button drop-shadow" title="Preview G-Code" id="gcodeviewbtn2" onclick="previewFile();"><span id="gcodepreviewicon" class="fa fa-eye fa-fw icon fg-gray"></span></button>
-								<button class="button drop-shadow" title="Clear G-Code" id="gcodetrashbtn2" onclick="trashGcode();"><span id="trashicon" class="fa fa-trash fa-fw fg-gray icon"></span></button>
-
+							<div class="cf-section-body cf-text-center">
+								<button class="cf-btn cf-btn-block" title="Generate G-Code" id="generatetpgcode" onclick="makeGcode();"><span class="fa fa-cubes"></span> Generate G-Code</button>
 							</div>
-
 						</div>
 
-				</div>
-				</div>
-				<div class="sidebar-handle">
-					<div class="sidebar-handle-labels">
-						<span>Documents</span>
-						<span>Toolpaths</span>
-						<span>G-code</span>
-						<span>Export</span>
+						<div class="cf-section">
+							<div class="cf-section-header">
+								<span class="cf-icon fa fa-save"></span>
+								<span>4. Export G-code</span>
+							</div>
+							<div class="cf-section-body cf-text-center">
+								<button class="cf-btn" title="Save G-Code" id="gcodesavebtn2" onclick="saveFile();"><span class="fa fa-save"></span> Save G-Code</button>
+								<button class="cf-btn" title="Preview G-Code" id="gcodeviewbtn2" onclick="previewFile();"><span id="gcodepreviewicon" class="fa fa-eye cf-text-muted"></span></button>
+								<button class="cf-btn" title="Clear G-Code" id="gcodetrashbtn2" onclick="trashGcode();"><span id="trashicon" class="fa fa-trash cf-text-muted"></span></button>
+							</div>
+						</div>
 					</div>
-					<div class="sidebar-handle-collapse"><span class="fas fa-chevron-right"></span></div>
 				</div>
+			<div class="sidebar-handle">
+				<div class="sidebar-handle-labels">
+					<span>Documents <span class="cf-badge" id="badge-docs">0</span></span>
+					<span>Toolpaths <span class="cf-badge" id="badge-tps">0</span></span>
+					<span>G-code</span>
+					<span>Export</span>
+				</div>
+				<div class="sidebar-handle-collapse"><span class="fas fa-chevron-right"></span></div>
+			</div>
 			</div>
 		</div>
 
@@ -434,19 +445,21 @@
 			<!-- <div id="openjscad"></div>
 		<div oncontextmenu="return false;" id="viewerContext"></div> -->
 			<!-- avoiding popup when right mouse is clicked -->
+		</div>
 
-			<div class="dialog dark" data-overlay-click-close="true" data-role="dialog" id="statusmodal" data-to-top="true" data-width="780">
-				<div class="dialog-title" id="statusTitle">Status title </div>
-				<div class="dialog-content">
+		<!-- statusmodal placed outside #container1 to avoid position:fixed clipping -->
+		<div class="cf-modal-overlay" id="statusmodal-overlay">
+			<div class="cf-modal" id="statusmodal">
+				<div class="cf-modal-title" id="statusTitle">Status title <span class="cf-modal-close" onclick="cfModalClose('statusmodal')">&times;</span></div>
+				<div class="cf-modal-content" style="overflow-y: auto; height: calc(100vh - 430px);">
 					<div id="statusBody"></div>
-					<div id="statusBody2" style="overflow-y: auto; height: calc(100vh - 430px); "></div>
+					<div id="statusBody2"></div>
 				</div>
-				<div class="dialog-actions" id="statusFooter">
-					<button class="button js-dialog-close">Disagree</button>
-					<button class="button primary js-dialog-close">Agree</button>
+				<div class="cf-modal-footer" id="statusFooter">
+					<button class="cf-btn" onclick="cfModalClose('statusmodal')">Disagree</button>
+					<button class="cf-btn cf-btn-primary" id="agreeBtn">Agree</button>
 				</div>
 			</div>
-
 		</div>
 
 	</body>

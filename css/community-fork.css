@@ -39,22 +39,17 @@
   color: #333;
 }
 
-/* ── Metro4 .input wrapper override ── */
-#statusBody2 .input {
+/* ── All text/number inputs in the form ── */
+#statusBody2 input[type="text"],
+#statusBody2 input[type="number"] {
   height: 26px;
-  min-height: 26px;
-}
-
-#statusBody2 .input input {
-  height: 24px !important;
-  min-height: 24px;
   font-size: 12px;
   padding: 0 6px;
-}
-
-/* Kill Metro4's .button-group inside inputs */
-#statusBody2 .input .button-group {
-  display: none;
+  border: 1px solid #d9d9d9;
+  box-sizing: border-box;
+  outline: none;
+  background: #fff;
+  color: #1d1d1d;
 }
 
 /* ── .input-addon (custom flex row) ── */
@@ -62,7 +57,12 @@
   display: flex;
   flex-flow: row nowrap;
   align-items: stretch;
-  margin-bottom: 2px;
+  margin: 2px 0;
+}
+
+/* Vertical spacing for standalone input rows */
+#statusBody2 .table tr > td .cam-form-field {
+  margin: 2px 0;
 }
 
 #statusBody2 .input-addon .input-addon-label-left,
@@ -89,9 +89,11 @@
   width: auto;
 }
 
-#statusBody2 .input-addon input {
+/* Input inside .input-addon: connect seamlessly with labels */
+#statusBody2 .input-addon input[type="text"],
+#statusBody2 .input-addon input[type="number"] {
   flex: 1 1 auto;
-  height: 26px !important;
+  height: 26px;
   min-height: 26px;
   min-width: 0;
   width: auto;
@@ -102,34 +104,27 @@
   border-right: none;
   box-sizing: border-box;
   outline: none;
+  margin: 0;
+  border-radius: 0;
 }
 
-/* ── cam-form-field base ── */
+/* ── cam-form-field base (standalone inputs, not in .input-addon) ── */
 #statusBody2 .cam-form-field {
-  padding: 2px 4px;
+  height: 26px;
+  padding: 0 4px;
   margin: 0;
   width: 100%;
   font-size: 12px;
+  box-sizing: border-box;
 }
 
-/* ── Native <select> overrides ── */
+/* ── Native <select> ── */
 #statusBody2 select.cam-form-field {
   height: 26px;
   padding: 1px 4px;
   font-size: 12px;
-}
-
-/* ── Metro4 .select wrapper override ── */
-#statusBody2 .select {
-  height: 26px;
-  min-height: 26px;
-}
-
-#statusBody2 .select .select-input {
-  height: 24px;
-  min-height: 24px;
-  font-size: 12px;
-  padding-left: 6px;
+  border: 1px solid #d9d9d9;
+  box-sizing: border-box;
 }
 
 /* ── Operation dropdown ── */
@@ -137,6 +132,8 @@
   height: 28px;
   font-size: 13px;
   padding: 2px 4px;
+  border: 1px solid #d9d9d9;
+  box-sizing: border-box;
 }
 
 /* ── Texture type table ── */
@@ -145,7 +142,8 @@
 }
 
 #statusBody2 .inputtexture select,
-#statusBody2 .inputtexture input {
+#statusBody2 .inputtexture input[type="text"],
+#statusBody2 .inputtexture input[type="number"] {
   height: 26px;
   font-size: 12px;
 }
@@ -171,4 +169,651 @@
   font-size: 13px;
   padding: 4px 12px;
   height: auto;
+}
+
+/* ════════════════════════════════════════════════
+   ── Sidebar (own identity, not Metro4)
+   ════════════════════════════════════════════════ */
+
+/* ── Floating overlay ── */
+#sidebar-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  background: #f5f5f5;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.12);
+  z-index: 5000;
+  display: flex;
+  flex-direction: row;
+  transition: width 0.25s ease;
+  overflow: hidden;
+}
+#sidebar-overlay.sidebar-closed { width: 34px; }
+#sidebar-overlay.sidebar-open   { width: 300px; }
+
+/* ── Content area (hidden when closed) ── */
+.sidebar-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#sidebar-overlay.sidebar-closed .sidebar-content {
+  display: none;
+}
+
+.sidebar-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 8px 8px;
+}
+
+/* ── Always-visible handle ── */
+.sidebar-handle {
+  width: 34px;
+  flex-shrink: 0;
+  background: #f0f0f0;
+  border-left: 1px solid #ddd;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.sidebar-handle:hover { background: #e8e8e8; }
+
+.sidebar-handle-labels {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+}
+#sidebar-overlay.sidebar-open .sidebar-handle-labels { display: none; }
+
+.sidebar-handle-labels span {
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+  padding: 10px 0;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #e0e0e0;
+  transition: color 0.15s, background 0.15s;
+}
+.sidebar-handle-labels span:hover {
+  color: #333;
+  background: #e0e0e0;
+}
+.sidebar-handle-labels span:last-child { border-bottom: none; }
+
+.sidebar-handle-collapse {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  width: 100%;
+  color: #888;
+  font-size: 16px;
+}
+#sidebar-overlay.sidebar-open .sidebar-handle-collapse { display: flex; }
+.sidebar-handle-collapse:hover {
+  color: #333;
+  background: #e0e0e0;
+}
+
+/* ── Sidebar sections (replaces Metro4 .window) ── */
+.cf-section {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 6px;
+}
+
+.cf-section-header {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 8px;
+  border-left: 3px solid #4a90d9;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #666;
+  background: #fafafa;
+  border-bottom: 1px solid #e8e8e8;
+  user-select: none;
+}
+
+.cf-section-header .cf-icon {
+  margin-right: 5px;
+  font-size: 12px;
+  color: #4a90d9;
+}
+
+.cf-section-body {
+  padding: 6px 8px;
+}
+
+/* ── Buttons (replaces Metro4 .button.drop-shadow) ── */
+.cf-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 8px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #444;
+  background: #fff;
+  border: 1px solid #d0d0d0;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s, border-color 0.12s;
+}
+.cf-btn:hover {
+  background: #f0f0f0;
+  border-color: #bbb;
+}
+.cf-btn:active {
+  background: #e0e0e0;
+}
+.cf-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
+
+.cf-btn-sm {
+  height: 22px;
+  font-size: 10px;
+  padding: 0 6px;
+}
+
+.cf-btn-primary {
+  color: #fff;
+  background: #4a90d9;
+  border-color: #3a7bc8;
+}
+.cf-btn-primary:hover {
+  background: #3a7bc8;
+  border-color: #2d6bb3;
+}
+.cf-btn-primary:active {
+  background: #2d6bb3;
+}
+
+/* Color variants for toolpath tree action buttons */
+.cf-btn-green  { color: #fff; background: #4caf50; border-color: #43a047; }
+.cf-btn-green:hover  { background: #43a047; border-color: #388e3c; }
+.cf-btn-orange { color: #fff; background: #ff9800; border-color: #f57c00; }
+.cf-btn-orange:hover{ background: #f57c00; border-color: #e65100; }
+.cf-btn-red    { color: #fff; background: #e53935; border-color: #d32f2f; }
+.cf-btn-red:hover    { background: #d32f2f; border-color: #b71c1c; }
+.cf-btn-gray   { color: #444; background: #f5f5f5; border-color: #d0d0d0; }
+.cf-btn-gray:hover   { background: #eee; border-color: #bbb; }
+
+/* Mini icon button for toolpath tree rows */
+.cf-btn-icon {
+  height: 22px;
+  width: 24px;
+  padding: 0;
+  justify-content: center;
+  font-size: 10px;
+  border-radius: 2px;
+}
+
+.cf-btn-group {
+  display: flex;
+  gap: 0;
+}
+.cf-btn-group .cf-btn {
+  border-radius: 0;
+}
+.cf-btn-group .cf-btn:first-child {
+  border-radius: 2px 0 0 2px;
+}
+.cf-btn-group .cf-btn:last-child {
+  border-radius: 0 2px 2px 0;
+}
+.cf-btn-group .cf-btn + .cf-btn {
+  margin-left: -1px;
+}
+
+/* ── Split button (replaces Metro4 .split-button) ── */
+.cf-split {
+  display: inline-flex;
+  align-items: stretch;
+}
+.cf-split .cf-btn:first-child {
+  border-radius: 2px 0 0 2px;
+}
+.cf-split .cf-split-toggle {
+  padding: 0 6px;
+  border-radius: 0 2px 2px 0;
+  border-left: none;
+  font-size: 10px;
+}
+
+/* ── Dropdown menu (replaces Metro4 .d-menu) ── */
+.cf-dropdown {
+  display: none;
+  position: absolute;
+  z-index: 5100;
+  min-width: 180px;
+  background: #fff;
+  border: 1px solid #d0d0d0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 4px 0;
+}
+.cf-dropdown.open { display: block; }
+.cf-dropdown.cf-dropdown-down { margin-top: 2px; }
+.cf-dropdown.cf-dropdown-up   { margin-bottom: 2px; }
+
+.cf-dropdown li {
+  list-style: none;
+  margin: 0;
+}
+.cf-dropdown a {
+  display: block;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.cf-dropdown a:hover {
+  background: #e8f0fa;
+  color: #1a5a9e;
+}
+
+/* ── CSS spinner (replaces Metro4 data-role="activity") ── */
+.cf-spinner {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  border: 3px solid #e0e0e0;
+  border-top-color: #4a90d9;
+  border-radius: 50%;
+  animation: cf-spin 0.7s linear infinite;
+}
+@keyframes cf-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Badges on sidebar handle ── */
+:root {
+  --cf-badge-bg: #5a5a5a;
+  --cf-badge-fg: #fff;
+  --cf-badge-font-size: 9px;
+  --cf-badge-size: 13px;
+  --cf-badge-radius: 2px;
+  --cf-badge-padding: 0 2px;
+}
+.cf-badge {
+  display: inline-block;
+  height: var(--cf-badge-size);
+  padding: var(--cf-badge-padding);
+  font-size: var(--cf-badge-font-size);
+  font-weight: 700;
+  line-height: var(--cf-badge-size);
+  text-align: center;
+  color: var(--cf-badge-fg);
+  background: var(--cf-badge-bg);
+  border-radius: var(--cf-badge-radius);
+  vertical-align: top;
+  margin-top: 2px;
+}
+
+/* ── Viewer visibility bar (replaces old help bar) ── */
+:root {
+  --cf-vis-bar-bg: rgba(235,235,235,0.92);
+  --cf-vis-bar-fg: #666;
+  --cf-vis-bar-hover-bg: rgba(200,200,200,0.6);
+  --cf-vis-bar-active-fg: #222;
+  --cf-vis-bar-active-bg: rgba(180,180,180,0.5);
+}
+#viewer-visibility-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 26px;
+  background: var(--cf-vis-bar-bg);
+  border-top: 1px solid rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 6px;
+  z-index: 2;
+  user-select: none;
+}
+.cf-visibility-check {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 11px;
+  color: var(--cf-vis-bar-fg);
+  transition: background 0.12s, color 0.12s;
+}
+.cf-visibility-check:hover {
+  background: var(--cf-vis-bar-hover-bg);
+}
+.cf-visibility-check:has(input:checked) {
+  background: var(--cf-vis-bar-active-bg);
+}
+.cf-visibility-check input {
+  margin: 0;
+  accent-color: #888;
+  width: 11px;
+  height: 11px;
+}
+.cf-visibility-check input:checked + .cf-vis-label {
+  color: var(--cf-vis-bar-active-fg);
+  font-weight: 600;
+}
+
+/* ── Floating Add Toolpath button (over 3D viewer, hidden when sidebar open) ── */
+#cf-float-tp {
+  position: fixed;
+  right: 44px;
+  bottom: 16px;
+  z-index: 4900;
+  transition: opacity 0.2s, visibility 0.2s;
+}
+#cf-float-tp.sidebar-open {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+#cf-float-tp .cf-btn {
+  background: #4a90d9;
+  color: #fff;
+  border-color: #3a7bc8;
+  font-size: 12px;
+  height: 30px;
+  padding: 0 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+#cf-float-tp .cf-btn:hover {
+  background: #3a7bc8;
+  border-color: #2d6bb3;
+}
+#cf-float-tp .cf-btn:disabled {
+  background: #888;
+  border-color: #777;
+  box-shadow: none;
+}
+#cf-float-tp .cf-split-toggle {
+  border-left: 1px solid rgba(255,255,255,0.3);
+}
+
+/* ── Responsive sidebar ── */
+@media (max-width: 768px) {
+  #sidebar-overlay.sidebar-open {
+    width: calc(100vw - 48px);
+  }
+}
+
+/* ── Tree view (replaces Metro4 data-role="treeview") ── */
+.cf-tree, .cf-tree ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cf-tree { font-size: 12px; user-select: none; }
+
+.cf-tree-node {}
+.cf-tree-node:not(:last-child) > .cf-tree-row {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.cf-tree-row {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 4px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.1s;
+}
+.cf-tree-row:hover { background: #e8f0fa; }
+
+.cf-tree-toggle {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  line-height: 14px;
+  text-align: center;
+  font-size: 8px;
+  color: #999;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.cf-tree-toggle::before { content: '\25B6'; } /* ▶ */
+.cf-tree-node.expanded > .cf-tree-row > .cf-tree-toggle::before { content: '\25BC'; } /* ▼ */
+.cf-tree-toggle:hover { color: #333; }
+
+/* No toggle shown on leaf nodes (vectors); span still exists to keep alignment */
+
+.cf-tree-check {
+  flex-shrink: 0;
+  margin: 0;
+  cursor: pointer;
+  accent-color: #4a90d9;
+}
+
+.cf-tree-label {
+  flex: 1;
+  font-size: 12px;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Nested level indentation: each group pushes 20px right */
+.cf-tree-group {
+  display: none;
+  padding-left: 0;
+  margin-left: 20px;
+}
+.cf-tree-node.expanded > .cf-tree-group { display: block; }
+
+/* ── Toolpath tree items ── */
+#sidebar-overlay .toolpath-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.12s;
+}
+#sidebar-overlay .toolpath-item:hover {
+  background: #e8f0fa;
+}
+#sidebar-overlay .toolpath-item .tp-icon {
+  color: #4a90d9;
+  font-size: 11px;
+  width: 16px;
+  text-align: center;
+}
+#sidebar-overlay .toolpath-item .tp-status {
+  margin-left: auto;
+  font-size: 10px;
+  color: #999;
+}
+
+/* ════════════════════════════════════════════════
+   ── Modal / Dialog (replaces Metro4 data-role="dialog")
+   ════════════════════════════════════════════════ */
+
+.cf-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 7000;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  padding: 40px 16px;
+}
+.cf-modal-overlay.open {
+  display: flex;
+}
+
+.cf-modal {
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 80px);
+}
+
+.cf-modal-title {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: #3c6478;
+  border-radius: 4px 4px 0 0;
+  flex-shrink: 0;
+}
+
+.cf-modal-title .cf-modal-close {
+  margin-left: auto;
+  cursor: pointer;
+  opacity: 0.7;
+  font-size: 16px;
+  line-height: 1;
+}
+.cf-modal-title .cf-modal-close:hover {
+  opacity: 1;
+}
+
+.cf-modal-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #1d1d1d;
+}
+
+.cf-modal-footer {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  padding: 8px 14px;
+  border-top: 1px solid #e8e8e8;
+  flex-shrink: 0;
+}
+
+/* Prevent background scroll when modal open */
+body.cf-modal-open {
+  overflow: hidden;
+}
+
+/* Newly-created dynamic modals get a subtle animation */
+.cf-modal-overlay.open .cf-modal {
+  animation: cf-modal-in 0.18s ease-out;
+}
+@keyframes cf-modal-in {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Focus styling for dynamic dialogs ── */
+.cf-dialog-input {
+  width: 100%;
+  height: 30px;
+  padding: 0 8px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  box-sizing: border-box;
+  margin-top: 4px;
+}
+.cf-dialog-input:focus {
+  border-color: #4a90d9;
+  outline: none;
+}
+.cf-dialog-label {
+  font-size: 12px;
+  color: #555;
+  display: block;
+  margin-bottom: 2px;
+}
+.cf-dialog-hint {
+  font-size: 11px;
+  color: #999;
+  margin-top: 4px;
+  display: block;
+}
+
+/* ════════════════════════════════════════════════
+   ── Reusable utility classes (replace inline styles)
+   ════════════════════════════════════════════════ */
+
+/* Text / Color */
+.cf-text-muted { color: #888; }
+.cf-text-danger { color: #e53935; }
+.cf-text-center { text-align: center; }
+
+/* Layout */
+.cf-flex       { display: flex; }
+.cf-flex-wrap  { flex-flow: row wrap; }
+.cf-items-center { align-items: center; }
+.cf-gap-2      { gap: 2px; }
+.cf-ml-auto    { margin-left: auto; }
+.cf-mt-1       { margin-top: 4px; }
+.cf-mt-2       { margin-top: 8px; }
+.cf-mb-1       { margin-bottom: 4px; }
+.cf-p-2        { padding: 8px; }
+.cf-hidden     { display: none; }
+
+/* Buttons */
+.cf-btn-block  { width: 100%; }
+
+/* Disabled state */
+.cf-disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* Toolbar row for toolpath tree action buttons */
+.cf-toolbar {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 2px;
+  align-items: center;
+  margin: 2px 0;
+}
+
+/* Spinner label */
+.cf-spinner-label {
+  display: none;
+  margin-top: 6px;
+  color: #999;
+  font-size: 11px;
 }

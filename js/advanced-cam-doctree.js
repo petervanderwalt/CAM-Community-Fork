@@ -1,152 +1,103 @@
 var selectCount = 0;
 
-function treeClick(checkbox, node) {
+function treeClick(checked, node) {
   var type = node.getAttribute("data-type");
-  var checked = checkbox
   var object = node.getAttribute("data-object");
   var child = node.getAttribute("data-child");
   var layer = node.getAttribute("data-layer");
-  console.log(checkbox, "Event: " + (checked ? "Selected" : "Deselected") + " Type: " + type + " Object: " + object + ", child: " + child + ", layer: " + layer)
+  console.log(checked, "Event: " + (checked ? "Selected" : "Deselected") + " Type: " + type + " Object: " + object + ", child: " + child + ", layer: " + layer)
   if (type == "doc") {
-    if (checked) {
-      var object = objectsInScene[object]
-      object.traverse(function(child) {
-        if (child.type == "Line") {
-          child.userData.selected = true;
-        }
-      });
-    } else {
-      var object = objectsInScene[object]
-      object.traverse(function(child) {
-        if (child.type == "Line") {
-          child.userData.selected = false;
-        }
-      });
-    }
+    var obj = objectsInScene[object]
+    obj.traverse(function(c) {
+      if (c.type == "Line") c.userData.selected = checked;
+    });
   }
   if (type == "layer") {
-    if (checked) {
-      var object = objectsInScene[object]
-      object.traverse(function(child) {
-        if (child.type == "Line") {
-          if (child.userData.layer && child.userData.layer.label == layer) {
-            child.userData.selected = true;
-          }
-        }
-      });
-    } else {
-      var object = objectsInScene[object]
-      object.traverse(function(child) {
-        if (child.type == "Line") {
-          if (child.userData.layer && child.userData.layer.label == layer) {
-            child.userData.selected = false;
-          }
-        }
-      });
-    }
+    var obj = objectsInScene[object]
+    obj.traverse(function(c) {
+      if (c.type == "Line" && c.userData.layer && c.userData.layer.label == layer)
+        c.userData.selected = checked;
+    });
   }
   if (type == "vector") {
-    if (checked) {
-      objectsInScene[object].children[child].userData.selected = true;
-    } else {
-      objectsInScene[object].children[child].userData.selected = false;
-    }
+    objectsInScene[object].children[child].userData.selected = checked;
   }
   clearSceneFlag = true;
 }
 
+// Tree event handlers
+$(document).on('click', '.cf-tree-toggle', function(e) {
+  e.stopPropagation();
+  var node = $(this).closest('.cf-tree-node');
+  node.toggleClass('expanded');
+});
+
+$(document).on('change', '.cf-tree-check', function() {
+  var checked = this.checked;
+  var node = this;
+  treeClick(checked, node);
+});
+
 function filldoctree() {
-  // Empty the Documents node
   $('#left-tree-view').empty();
-
   clearSceneFlag = true;
-
-  // Two sorting strategies:
-
-  // Travelling Salesman Sort
-  // sortDocumentsByGeometryStartpoint()
-
-  // Sort Smallest to Largest
   sortPolyGons();
 
   if (objectsInScene.length > 0) {
-
-    // clear any childless parents
     for (i = 0; i < objectsInScene.length; i++) {
       if (objectsInScene[i].children.length < 1) {
         objectsInScene.splice(i, 1);
       }
-    };
+    }
 
-    // Create a New Tree on Viewer, with a Documents Node
-    var template = `<ul data-role="treeview" id="doctree" data-on-node-click="treeClick" data-on-check-click="treeClick">
-      <li data-icon="<span class='far fa-folder'></span>" data-caption="Documents">
-        <ul id="documenttree">
-        </ul>
-      </li>`
+    var template = '<ul class="cf-tree" id="doctree">';
+    template += '<li class="cf-tree-node"><div class="cf-tree-row"><span class="cf-tree-toggle"></span>';
+    template += '<input type="checkbox" class="cf-tree-check" id="docroot" checked data-type="root">';
+    template += '<span class="cf-tree-label"><span class="far fa-folder"></span> Documents</span></div>';
+    template += '<ul class="cf-tree-group" id="documenttree"></ul></li></ul>';
     $('#left-tree-view').append(template);
 
-    // Add Nodes under Documents for each Document.  Documents have id=doc0, doc1, etc doc+i
-    var template = '';
     for (i = 0; i < objectsInScene.length; i++) {
-      // <button class='button mini flat-button' onclick='storeUndo(); objectsInScene.splice(` + i + `,1); fillTree();''><i class='far fa-fw fa-trash-alt'></i></button>
-      template += `<li><input id="checkbox_` + i + `" type="checkbox" data-role="checkbox" data-caption="<span class='far fa-file'></span> ` + objectsInScene[i].name + `" data-type="doc" data-object="` + i + `"><ul id="doc` + i + `"></ul></li>`
-    };
-    $('#documenttree').append(template);
+      var tpl = '<li class="cf-tree-node"><div class="cf-tree-row"><span class="cf-tree-toggle"></span>';
+      tpl += '<input type="checkbox" class="cf-tree-check" id="checkbox_' + i + '" data-type="doc" data-object="' + i + '">';
+      tpl += '<span class="cf-tree-label"><span class="far fa-file"></span> ' + objectsInScene[i].name + '</span></div>';
+      tpl += '<ul class="cf-tree-group" id="doc' + i + '"></ul></li>';
+      $('#documenttree').append(tpl);
+    }
 
-    //Find Unique Layers
     for (i = 0; i < objectsInScene.length; i++) {
       var layersinthisdoc = []
       for (j = 0; j < objectsInScene[i].children.length; j++) {
-        if (objectsInScene[i].children[j].userData.layer) {
-          var layer = objectsInScene[i].children[j].userData.layer.label
-        } else {
-          var layer = 'layer1'
-        }
-        var found = jQuery.inArray(layer, layersinthisdoc);
-        if (found >= 0) {
-          // Element was found already
-        } else {
-          layersinthisdoc.push(layer); // Element was not found, add it.
-        }
-      };
+        var layer = objectsInScene[i].children[j].userData.layer ? objectsInScene[i].children[j].userData.layer.label : 'layer1';
+        if (jQuery.inArray(layer, layersinthisdoc) < 0) layersinthisdoc.push(layer);
+      }
 
-      // Add Layer Nodes
-      var template = '';
       for (j = 0; j < layersinthisdoc.length; j++) {
-        // Layers
-        template += `<li  data-collapsed="true"><input type="checkbox" data-role="checkbox" data-caption="<span class='fas fa-layer-group'></span> ` + layersinthisdoc[j] + `" data-type="layer" data-object="` + i + `" data-layer="` + layersinthisdoc[j] + `"><ul id="doc` + i + `layer` + layersinthisdoc[j].replace(/ /g, '') + `"></ul></li>`
+        var tpl = '<li class="cf-tree-node"><div class="cf-tree-row"><span class="cf-tree-toggle"></span>';
+        tpl += '<input type="checkbox" class="cf-tree-check" data-type="layer" data-object="' + i + '" data-layer="' + layersinthisdoc[j] + '">';
+        tpl += '<span class="cf-tree-label"><span class="fas fa-layer-group"></span> ' + layersinthisdoc[j] + '</span></div>';
+        tpl += '<ul class="cf-tree-group" id="doc' + i + 'layer' + layersinthisdoc[j].replace(/ /g, '') + '"></ul></li>';
+        $('#doc' + i).append(tpl);
       }
-      // console.log("Document " + i + "contains layers: ", layersinthisdoc, template)
-      $('#doc' + i).append(template);
 
-      // Add Vectors to Layers
       for (j = 0; j < objectsInScene[i].children.length; j++) {
-
-        var template = ` <li><input id="checkbox_` + i + `_` + j + `" type="checkbox" data-role="checkbox" data-caption="<span class='fas fa-vector-square'></span> ` + objectsInScene[i].children[j].name + `" data-type="vector" data-object="` + i + `" data-child="` + j + `" data-layer="` + layersinthisdoc[j] + `"></li>`
-
+        var layerKey = objectsInScene[i].children[j].userData.layer ? objectsInScene[i].children[j].userData.layer.label.replace(/ /g, '') : 'layer1';
         objectsInScene[i].children[j].userData.link = "link" + i + "_" + j;
-        if (objectsInScene[i].children[j].userData.layer) {
-          var layer = objectsInScene[i].children[j].userData.layer.label.replace(/ /g, '')
-        } else {
-          var layer = 'layer1'
-        }
-        $("#doc" + i + "layer" + layer).append(template);
+        var tpl = '<li class="cf-tree-node"><div class="cf-tree-row"><span class="cf-tree-toggle" style="visibility:hidden"></span>';
+        tpl += '<input type="checkbox" class="cf-tree-check" id="checkbox_' + i + '_' + j + '" data-type="vector" data-object="' + i + '" data-child="' + j + '" data-layer="' + layerKey + '">';
+        tpl += '<span class="cf-tree-label"><span class="fas fa-vector-square"></span> ' + objectsInScene[i].children[j].name + '</span></div></li>';
+        $("#doc" + i + "layer" + layerKey).append(tpl);
       }
-    };
+    }
 
-    $('#tpaddpath').removeClass('disabled');
-    $('#tpaddpath-dropdown').removeClass('disabled');
     $('#nodocuments').hide()
-  } else { // End of if (objectsInScene.length > 0
+  } else {
     $('#nodocuments').show()
   }
 }
 
-// runs in threejs animate() loop: Sets colors and checkboxes of items based on userdata.selected=true/false
+// runs in threejs animate() loop: syncs checkboxes with 3D selection
 function animateTree() {
-  // console.log('running animatetree')
-  var tree = $('#doctree').data('treeview');
   selectCount = 0;
   for (i = 0; i < objectsInScene.length; i++) {
     var obj = objectsInScene[i]
@@ -155,58 +106,44 @@ function animateTree() {
       var child = obj.children[j]
       if (child.type == "Line" && child.userData.selected) {
         if (child.userData.hover) {
-          // child.material.color.setRGB(0, 0.48, 1);
           child.material.color.setRGB(1, 0.2, 0.27);
         } else {
           child.material.color.setRGB(1, 0.2, 0.27);
         }
-        var check = $('#checkbox_' + i + '_' + j);
-        check.prop('checked', true);
+        $('#checkbox_' + i + '_' + j).prop('checked', true);
         childselectcount++
         selectCount++
       } else if (child.type == "Line" && !child.userData.selected) {
         if (child.userData.hover) {
           child.material.color.setRGB(0, 0.48, 1);
         } else {
-          var defaultcolor = new THREE.Color(0x000000);
-          child.material.color = defaultcolor
+          child.material.color.setRGB(0, 0, 0);
         }
-        var check = $('#checkbox_' + i + '_' + j);
-        check.prop('checked', false);
+        $('#checkbox_' + i + '_' + j).prop('checked', false);
       }
-    }
-    var tree = $('#doctree').data('treeview');
-    if (tree) {
-      tree._recheck(check);
     }
   }
   if (selectCount > 0) {
     $("#tpaddpathParent").prop('disabled', false).removeClass('disabled')
     $("#tpaddpath").prop('disabled', false);
-    // $('#floating-tpaddpath-btn').prop('disabled', false);
-    // $('#floating-tpaddpath-btn').addClass('success')
-    $('#addJobBtn,#addJobMenuBtn').addClass('success').prop('disabled', false)
+    $('#addJobBtn,#addJobMenuBtn,#floatAddJobBtn,#floatAddJobMenuBtn').addClass('success').prop('disabled', false)
     $("#tpaddicon").addClass('fg-green')
-    $(".addJobBtn-text").html("Create Toolpath using (" + selectCount + ") selected vectors");
-
+    $(".cf-addjob-text").html("Create Toolpath using (" + selectCount + ") selected vectors");
 
     if (toolpathsInScene.length > 0) {
       $("#remJobBtn").addClass('bg-green').addClass('fg-white').removeClass('disabled');
       $("#tpaddpath-dropdown").prop('disabled', false);
-      $("#addJobMenuBtn").show()
+      $("#addJobMenuBtn,#floatAddJobMenuBtn").show()
     } else {
-      $("#addJobMenuBtn").hide()
+      $("#addJobMenuBtn,#floatAddJobMenuBtn").hide()
     }
 
   } else {
     $("#tpaddpathParent").prop('disabled', true).addClass('disabled');
     $("#tpaddicon").removeClass('fg-green')
     $("#tpaddpath").prop('disabled', true);
-    // $('#floating-tpaddpath-btn').prop('disabled', true);
-    // $('#floating-tpaddpath-btn').removeClass('success')
-    $('#addJobBtn,#remJobBtn,#addJobMenuBtn').removeClass('success').prop('disabled', true)
+    $('#addJobBtn,#remJobBtn,#addJobMenuBtn,#floatAddJobBtn,#floatAddJobMenuBtn').removeClass('success').prop('disabled', true)
     $("#tpaddpath-dropdown").prop('disabled', true);
-
-    $(".addJobBtn-text").html("Please select Vector(s) to create toolpaths");
+    $(".cf-addjob-text").html("Please select Vector(s) to create toolpaths");
   }
 }
