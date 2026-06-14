@@ -8,11 +8,32 @@
 
 ---
 
+### Project History
+
+This codebase has evolved over more than a decade through several community projects:
+
+- **[grblWEB](https://github.com/andrewhodel/grblweb)** by **Andrew Hodel** — a web-based CNC controller for GRBL machines
+- **[JSCut](https://github.com/tbfleming/jscut)** by **Todd Fleming** — an in-browser CAM application for converting SVGs to G-Code
+- **[LaserWeb / CNCWeb 4](https://github.com/LaserWeb/LaserWeb4)** — a collaborative project bringing together CAM generation and machine control, with contributions from:
+  - **Peter van der Walt** — project founder, user interface
+  - **Todd Fleming** — CNC CAM modules, WebGL, CAM UI
+  - **Claudio Prezzi** — communications modules, server
+  - **Sebastien Mischler** — backend development, raster module, SVG parser
+  - **Jorge Robles** — settings module, user interface, optimizations
+  - **Monte Krol** — user interface, Electron installer
+  - **Anthony Tamrin** — Electron installer
+  - **Anthony Bolgar** (RIP) — documentation
+  - And many more community contributors
+- **OpenBuilds CAM** — a fork of LaserWeb/CNCWeb that OpenBuilds branded, further developed, and distributed for the community
+- **CAM Community Fork** (this repository) — a community-maintained fork continued after OpenBuilds ceased operations
+
+---
+
 ### License
 
 This project is licensed under the **GNU Affero General Public License v3** (AGPL-3.0). See the [LICENSE](LICENSE) file for details.
 
-The original codebase was developed by OpenBuilds and released under AGPL-3.0. This fork continues under the same license.
+This fork continues under the same license, as did all its predecessors (grblWEB, JSCut, and LaserWeb/CNCWeb).
 
 ---
 
