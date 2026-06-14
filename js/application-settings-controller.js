@@ -251,7 +251,7 @@ function selectToolhead(type) {
   $('#startgcode').val("");
   $('#endgcode').val("");
   $("#ihsgcode").val("");
-  var startcode = `; Created by OpenBuilds CAM\nG54; Work Coordinates\nG21; mm-mode\nG90; Absolute Positioning\n`;
+  var startcode = `; Created by CAM Community Fork\nG54; Work Coordinates\nG21; mm-mode\nG90; Absolute Positioning\n`;
   var endcode = "";
 
   if ($("#hasRouter").is(':checked')) {
@@ -374,7 +374,7 @@ $(document).ready(function() {
       <form>
 
         <div>
-          <center><h6>Welcome to OpenBuilds CAM</h6> Let us help you get set up!</center>
+          <center><h6>Welcome to CAM Community Fork</h6> Let us help you get set up!</center>
         </div>
 
           <ul class="step-list mb-3">
