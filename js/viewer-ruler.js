@@ -1,9 +1,9 @@
 function drawRuler() {
   var ruler = new THREE.Group();
   var material = new THREE.LineBasicMaterial({
-    color: Theme.RULER_COLOR
+    color: 0x888888
   });
-  material.opacity = Theme.RULER_OPACITY;
+  material.opacity = 0.15;
 
   // x axis
   for (i = 0; i <= sizexmax; i++) {
@@ -75,7 +75,7 @@ function drawRuler() {
       y: -10,
       z: 0,
       text: i,
-      color: Theme.X_RULER_NUMBER_COLOR,
+      color: "#cc0000",
       size: 4
     });
     ruler.add(x[i]);
@@ -87,7 +87,7 @@ function drawRuler() {
       y: i,
       z: 0,
       text: i,
-      color: Theme.Y_RULER_NUMBER_COLOR,
+      color: "#006600",
       size: 4
     });
     ruler.add(y[i]);

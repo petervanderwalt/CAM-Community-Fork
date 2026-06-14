@@ -10,15 +10,7 @@
 		<meta name="keywords" content="" />
 		<meta name="author" content="" />
 		<meta name="version" content="" />
-		<!-- Mobile Redirect if screen is too small. -->
 		<meta name="metro4:init" content="true">
-
-		<script type="text/javascript">
-			if (screen.width <= 720) {
-				window.location = "mobile.html";
-			}
-		</script>
-		<link rel="stylesheet" type="text/css" href="lib/jquery/fontselect/styles/fontselect-bootstrap4.css" />
 		<link href="https://fonts.googleapis.com/css?family=Bowlby+One+SC" rel="stylesheet">
 		<link type="text/css" rel="stylesheet" media="all" href="css/main.css" />
 		<link type="text/css" rel="stylesheet" media="all" href="css/grpblock.css" />
@@ -110,17 +102,10 @@
 				<i class="fas fa-square fg-red"></i>
 				<i class="fa fa-object-group fg-white" data-fa-transform="shrink-6"></i>
 			</span>
-			<div data-role="splitter" data-split-sizes="80,20" data-min-sizes="480,400" class="h-100">
-				<div id="col1" style="overflow: hidden;">
+			<div id="main-viewer" class="h-100" style="overflow:hidden;">
 					<div class="window drop-shadow" style="height: calc(100% - 10px); overflow: hidden;">
-						<div class="window-caption bg-black" style="height: 90px; padding: 10px;">
-							<img src="images/OpenBuildsCAM.svg" height="70" alt="OpenBuilds CAM" />
-							<div class="navbar">
-								<a href="https://us.openbuilds.com" target="_blank">Part Store</a>
-								<a href="https://docs.openbuilds.com" target="_blank">Documentation</a>
-								<a href="https://builds.openbuilds.com" target="_blank">Community</a>
-								<a href="https://support.openbuilds.com" target="_blank">Support</a>
-							</div>
+						<div class="window-caption bg-gray" style="height: 28px; padding: 0 10px; line-height: 28px;">
+							<span style="font-family: 'Open Sans', Helvetica, Arial, sans-serif; font-size: 13px; color: #fff;">OpenBuilds CAM Community Fork</span>
 						</div>
 						<div class="window-content pt-2" style="overflow:hidden; ">
 							<nav data-role="ribbonmenu">
@@ -165,65 +150,12 @@
 														<li class="btn-file"><a href="#">Open Project (.JSON, .OBC)</a><input type="file" id="workspaceImport" accept=".json,.obc" multiple style="height: 26px;" /></li>
 													</ul>
 												</div>
-												<div>
-													<button class="ribbon-icon-button dropdown-toggle">
-														<span class="icon">
-															<span class="fas fa-cog"></span>
-														</span>
-														<span class="caption">Load Example Project</span>
-													</button>
-													<ul class="ribbon-dropdown" data-role="dropdown" data-duration="100">
-														<li onclick="helloWorld()"><a href="#">CNC Hello World</a></li>
-														<li onclick="helloWorldLaser()"><a href="#">Laser Hello World</a></li>
-														<li onclick="helloWorldPlasma()"><a href="#">Plasma Hello World</a></li>
-														<li onclick="helloWorldPen()"><a href="#">Pen Plotter Hello World (RC Servo)</a></li>
-														<li onclick="helloWorldPenZ()"><a href="#">Pen Plotter Hello World (Z Axis)</a></li>
-														<li onclick="helloWorldDragKnife()"><a href="#">Dragknife Hello World</a></li>
-													</ul>
-												</div>
+
 											</div>
 											<span class="title">Project</span>
 										</div>
 
-										<div class="group">
-											<div class="ribbon-group">
-												<button class="ribbon-icon-button" onclick="Metro.dialog.open(' #addShapeText ');">
-													<span class="icon">
-														<span class="fas fa-font"></span>
-													</span>
-													<span class="caption">Text</span>
-												</button>
-												<br>
 
-												<div>
-													<button class="ribbon-icon-button dropdown-toggle">
-														<span class="icon">
-															<span class="far fa-square"></span>
-														</span>
-														<span class="caption">Shapes</span>
-													</button>
-													<ul class="ribbon-dropdown" data-role="dropdown" data-duration="100">
-														<li onclick="Metro.dialog.open(' #addShapeCircle ');"><a href="#">Circle</a></li>
-														<li onclick="Metro.dialog.open(' #addShapeRect ');"><a href="#">Rectangle</a></li>
-													</ul>
-												</div>
-
-
-
-												<div class="ribbon-group">
-
-													<button class="ribbon-icon-button" onclick="Metro.dialog.open(' #iconslibModal ');">
-														<span class="icon">
-															<span class="far fa-images"></span>
-														</span>
-														<span class="caption">Icons</span>
-													</button>
-
-												</div>
-
-											</div>
-											<span class="title">Insert</span>
-										</div>
 
 										<div class="group">
 											<div class="ribbon-group">
@@ -261,19 +193,6 @@
 											</div>
 											<span class="title">Undo/Redo</span>
 										</div>
-										<div class="group">
-
-											<div id="ddThemeButton">
-												<button id="btnTheme" class="ribbon-button" onclick="Theme.toggle();">
-													<span class="icon" id="currentThemeIcon">
-														<i class="fas fa-paint-brush"></i>
-													</span>
-													<span class="caption" id="currentThemeName">Dark<br>Mode</span>
-												</button>
-											</div>
-											<span class="title">Theme</span>
-										</div>
-
 
 
 									</div>
@@ -317,44 +236,11 @@
 
 
 
-										<div class="group">
-											<div class="ribbon-group">
-												<button class="ribbon-icon-button" onclick="getChangelog()">
-													<span class="icon">
-														<span class="fa fa-fw fa-list"></span>
-													</span>
-													<span class="caption">Changelog</span>
-												</button>
-												<br>
-												<button class="ribbon-icon-button" onclick="window.open('https://github.com/openbuilds/OpenBuilds-CAM/fork', '_blank').focus();">
-													<span class="icon">
-														<span class="fas fa-code-branch"></span>
-													</span>
-													<span class="caption">Fork <span id="forksCount" class="tally success"> 0 </span></span>
-												</button>
-											</div>
-											<span class="title">App</span>
-										</div>
-
-										<div class="group">
-
-											<div id="ddThemeButton">
-												<button id="btnTheme" class="ribbon-button" onclick="Theme.toggle();">
-													<span class="icon" id="currentThemeIcon">
-														<i class="fas fa-paint-brush"></i>
-													</span>
-													<span class="caption" id="currentThemeName">Dark<br>Mode</span>
-												</button>
-											</div>
-											<span class="title">Theme</span>
-										</div>
-
-
 									</div>
 							</nav>
 							<div id="renderArea">
 
-								<div style="position: absolute; top: 10px; right:10px; z-index: 1; max-width: 100px; max-width: 100px;" id="overlayimg"></div>
+
 
 								<!-- #draganddrop -->
 								<div id="draganddrop" style="display: none;">
@@ -387,7 +273,7 @@
 
 							<div id="scalewindow" style="visibility: hidden;" data-role="draggable" data-drag-element=".drag-element">
 								<div class="window">
-									<div class="window-caption drag-element bg-openbuilds">
+									<div class="window-caption drag-element bg-gray">
 										<span class="icon fas fa-ruler"></span>
 										<span class="title">Transform</span>
 										<div class="buttons">
@@ -420,14 +306,13 @@
 						</div>
 					</div>
 				</div>
+			</div>
 
-				<!-- #col2 (main content)-->
-				<div id="col2">
-					<!-- <div style="height: 100%; overflow-y:hidden; padding-right:5px;"> -->
-
-					<div data-role="splitter" data-split-mode="vertical" data-split-sizes="25,55,10,10" data-min-sizes="200,200,100,110" class="h-100">
+			<div id="sidebar-overlay" class="sidebar-closed">
+				<div class="sidebar-content">
+					<div class="sidebar-scroll">
 						<div id="renderDocuments" class="window drop-shadow">
-							<div class="window-caption bg-black">
+							<div class="window-caption bg-gray">
 								<i class="far fa-file-alt fa-fw ml-1 mr-1"></i>
 								<span class="title">1. Documents <span class="workspaceTitle"></span></span>
 							</div>
@@ -451,7 +336,7 @@
 										<p class="text-secondary text-center mt-3">Please load some vectors from DXF (Polylines) or SVG (Paths); or Images (Traceable); or insert a Shape, Icon or some Text using the built-in tools to get started
 										</p>
 										<p class="text-center">
-											<button class="ob-button bg-obred fg-white drop-shadow" style="width: 300px;" title="Open Drawing" onclick="$('#file').click();"><span class="far fa-folder-open fa-fw icon"></span>Open Drawing</button>
+											<button class="ob-button bg-success fg-white drop-shadow" style="width: 300px;" title="Open Drawing" onclick="$('#file').click();"><span class="far fa-folder-open fa-fw icon"></span>Open Drawing</button>
 										</p>
 
 
@@ -464,7 +349,7 @@
 
 						</div>
 						<div class="window drop-shadow mt-2">
-							<div class="window-caption bg-black">
+							<div class="window-caption bg-gray">
 								<i class="fas fa-tasks fa-fw ml-1 mr-1"></i>
 								<span class="title">2. Configure Toolpaths</span>
 								<div class="buttons">
@@ -496,7 +381,7 @@
 						</div>
 
 						<div class="window drop-shadow mt-2">
-							<div class="window-caption bg-black">
+							<div class="window-caption bg-gray">
 								<i class="fa fa-cubes fa-fw ml-1 mr-1"></i>
 								<span class="title">3. Create G-code</span>
 								<div class="buttons">
@@ -508,7 +393,7 @@
 						</div>
 
 						<div class="window drop-shadow mt-2">
-							<div class="window-caption bg-black">
+							<div class="window-caption bg-gray">
 								<i class="fa fa-save fa-fw ml-1 mr-1"></i>
 								<span class="title">4. Export G-code</span>
 								<div class="buttons">
@@ -526,8 +411,16 @@
 
 						</div>
 
+				</div>
+				</div>
+				<div class="sidebar-handle">
+					<div class="sidebar-handle-labels">
+						<span>Documents</span>
+						<span>Toolpaths</span>
+						<span>G-code</span>
+						<span>Export</span>
 					</div>
-					<!-- </div> -->
+					<div class="sidebar-handle-collapse"><span class="fas fa-chevron-right"></span></div>
 				</div>
 			</div>
 		</div>
@@ -541,7 +434,7 @@
 		<div oncontextmenu="return false;" id="viewerContext"></div> -->
 			<!-- avoiding popup when right mouse is clicked -->
 
-			<div class="dialog dark" data-overlay-click-close="true" data-role="dialog" id="statusmodal" data-to-top="true" data-width="540">
+			<div class="dialog dark" data-overlay-click-close="true" data-role="dialog" id="statusmodal" data-to-top="true" data-width="780">
 				<div class="dialog-title" id="statusTitle">Status title </div>
 				<div class="dialog-content">
 					<div id="statusBody"></div>
@@ -553,39 +446,7 @@
 				</div>
 			</div>
 
-			<div class="dialog dark" data-overlay-click-close="true" data-role="dialog" id="iconslibModal" data-width="800" data-to-top="true">
-				<div class="dialog-title">Icons Library</div>
-				<div class="dialog-content" style="max-height: calc(100vh - 200px);overflow-y: auto; overflow-x: hidden;">
-					Click Icon below to load it into CAM project:
-					<hr>
-					<div id="iconslibrary">
-
-					</div>
-				</div>
-				<div class="dialog-actions row" style="white-space: nowrap;">
-					<button class="button float-right js-dialog-close cell-3">Cancel</button>
-
-					<input id="iconlib_filter" onchange="iconlib_Page()" class="float-left" style="max-width:150px;" data-role="input" data-search-button="true" placeholder="Filter" autofocus type="text" value="">
-
-					<div style="display:inline-block;white-space: normal;">
-						<button class="button float-left" onclick="iconlib_Page(-1)"><span class="fa fa-fw fa-arrow-left"></span></button>
-
-						<input data-role="input" id="iconlib_PageOf" onchange="iconlib_Page()" autofocus type="number" min="1" step="1" data-prepend="Page:" data-append="Of #" class="float-left" value="1" style="width:175px;">
-
-						<button class="button float-left" onclick="iconlib_Page(1)"><span class="fa fa-fw fa-arrow-right"></span></button>
-					</div>
-				</div>
-			</div>
-
-			<div class="dialog dark" data-overlay-click-close="true" data-role="dialog" id="splashModal" data-width="800" data-to-top="true">
-				<div class="dialog-title"><i class="fas fa-fw fa-history"></i> Changelog</div>
-				<div class="dialog-content" style="max-height: calc(100vh - 200px);overflow-y: auto; overflow-x: hidden;">
-					<div id="changelog" class="text-small"></div>
-				</div>
-				<div class="dialog-actions">
-					<button class="button js-dialog-close primary">Close</button>
-				</div>
-			</div>
+		</div>
 
 	</body>
 
@@ -614,16 +475,6 @@
 	<script type="text/javascript" src="js/helpers.js"></script>
 
 	<!-- Theme  -->
-	<script type="text/javascript" src="js/theme.js"></script>
-
-	<!-- Google Fonts as CAM paths -->
-	<script type="text/javascript" src="lib/jquery/fontselect/jquery.fontselect.min.js"></script>
-	<script type="text/javascript" src="lib/opentypejs/opentype.min.js"></script>
-
-	<!-- SimpleCAD -->
-	<script type="text/javascript" src="js/basic-cad-shapes.js"></script>
-	<script type="text/javascript" src="js/basic-cad-text.js"></script>
-	<script type="text/javascript" src="js/basic-cad-iconslib.js"></script>
 
 	<!-- ThreeJS -->
 	<script type="text/javascript" src="lib/threejs/three.min.js"></script>
@@ -683,9 +534,6 @@
 	<!-- Gcode Viewer -->
 	<script type="text/javascript" src="lib/3dview/3dview.js"></script>
 
-	<!-- Hello World Job -->
-	<script type="text/javascript" src="js/basic-cad-helloworld.js"></script>
-
 	<!-- Gerber Parser -->
 	<script type="text/javascript" src="lib/gerber/parser.js"></script>
 	<script type="text/javascript" src="lib/gerber/gerberparser.js"></script>
@@ -708,8 +556,7 @@
 <script src="lib/openjscad/geargen.js"></script> -->
 
 
-	<!-- Used by CAD-text -->
-	<script src="https://cdn.jsdelivr.net/npm/rsvp@4/dist/rsvp.min.js"></script>
+
 
 	<script type="x-shader/x-vertex" id="vertexShader">
 		varying vec3 vWorldPosition; void main() { vec4 worldPosition = modelMatrix * vec4( position, 1.0 ); vWorldPosition = worldPosition.xyz; gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 ); }
@@ -720,31 +567,5 @@
 	h , 0.0), exponent ), 0.0 ) ), 1.0 ); }
 
 </script>
-
-	<!-- Google tag (gtag.js) PW -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=G-0RS08406WF"></script>
-	<script>
-		window.dataLayer = window.dataLayer || [];
-
-		function gtag() {
-			dataLayer.push(arguments);
-		}
-		gtag('js', new Date());
-
-		gtag('config', 'G-0RS08406WF');
-	</script>
-
-	<!-- Google tag (gtag.js) OB -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=G-99W0NNG5PL"></script>
-	<script>
-		window.dataLayer = window.dataLayer || [];
-
-		function gtag() {
-			dataLayer.push(arguments);
-		}
-		gtag('js', new Date());
-
-		gtag('config', 'G-99W0NNG5PL');
-	</script>
 
 </html>

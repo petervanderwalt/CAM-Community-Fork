@@ -64,7 +64,7 @@ function drawWorkspace() {
   sceneLights.add(dirLight);
 
   hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
-  hemiLight.color.setHSL(Theme.HEMI_LIGHT_COLOR.H, Theme.HEMI_LIGHT_COLOR.S, Theme.HEMI_LIGHT_COLOR.L);
+  hemiLight.color.setHSL(0.6, 1.0, 0.6);
   hemiLight.groundColor.setHSL(0.095, 1, 0.75);
   hemiLight.position.set(0, 50, 0);
   hemiLight.visible = false;
@@ -81,10 +81,10 @@ function drawWorkspace() {
   // SKYDOME
   var uniforms = {
     topColor: {
-      value: new THREE.Color(Theme.SKY_TOP_COLOR)
+      value: new THREE.Color(0x0077ff)
     },
     bottomColor: {
-      value: new THREE.Color(Theme.SKY_BOTTOM_COLOR)
+      value: new THREE.Color(0xffffff)
     },
     offset: {
       value: -63
@@ -165,14 +165,14 @@ function redrawGrid() {
     y: 0,
     z: 0,
     text: "X",
-    color: Theme.X_RULER_LABEL_COLOR,
+    color: "#ff0000",
   });
   var ylbl = this.makeSprite(this.scene, "webgl", {
     x: 0,
     y: parseInt(sizeymax) + 5,
     z: 0,
     text: "Y",
-    color: Theme.Y_RULER_LABEL_COLOR,
+    color: "#006600",
   });
   var zlbl = this.makeSprite(this.scene, "webgl", {
     x: 0,
@@ -187,11 +187,11 @@ function redrawGrid() {
   //axesgrp.add(zlbl); Laser don't have Z - but CNCs do
 
   var materialX = new THREE.LineBasicMaterial({
-    color: Theme.X_AXIS_LINE_COLOR
+    color: 0xcc0000
   });
 
   var materialY = new THREE.LineBasicMaterial({
-    color: Theme.Y_AXIS_LINE_COLOR
+    color: 0x00cc00
   });
 
   var geometryX = new THREE.Geometry();
@@ -213,20 +213,20 @@ function redrawGrid() {
 
   grid.add(axesgrp);
 
-  helper = new THREE.GridHelper(sizexmax, sizeymax, 10, Theme.GRID_STEP_10_COLOR);
+  helper = new THREE.GridHelper(sizexmax, sizeymax, 10, 0x888888);
   helper.position.y = 0;
   helper.position.x = 0;
   helper.position.z = 0;
-  helper.material.opacity = Theme.GRID_STEP_10_OPACITY;
+  helper.material.opacity = 0.15;
   helper.material.transparent = true;
   helper.receiveShadow = false;
   helper.name = "GridHelper10mm"
   grid.add(helper);
-  helper = new THREE.GridHelper(sizexmax, sizeymax, 100, Theme.GRID_STEP_100_COLOR);
+  helper = new THREE.GridHelper(sizexmax, sizeymax, 100, 0x666666);
   helper.position.y = 0;
   helper.position.x = 0;
   helper.position.z = 0;
-  helper.material.opacity = Theme.GRID_STEP_100_OPACITY;
+  helper.material.opacity = 0.15;
   helper.material.transparent = true;
   helper.receiveShadow = false;
   helper.name = "GridHelper50mm"
@@ -327,7 +327,7 @@ function init3D() {
   // Picking stuff
   projector = new THREE.Projector();
   mouseVector = new THREE.Vector3();
-  raycaster.linePrecision = 1
+  raycaster.linePrecision = 15
 
   setTimeout(function() {
     resetView()
@@ -541,7 +541,7 @@ function makeSprite(scene, rendererType, vals) {
     map: texture,
     // useScreenCoordinates: false,
     transparent: true,
-    opacity: Theme.SPRITE_OPACITY
+    opacity: 0.6
   });
   material.transparent = true;
   //var textObject = new THREE.Sprite(material);

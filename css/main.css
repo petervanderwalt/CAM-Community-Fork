@@ -852,20 +852,6 @@ d-grid {
 .hiddenbtn {
   display: none !important;
 }
-
-/* OpenBuilds Navbar for MetroWindows */
-.fg-openbuilds {
-  color: rgb(64, 68, 71) !important;
-}
-
-.bg-openbuilds {
-  background-color: rgb(64, 68, 71) !important;
-}
-
-.bd-openbuilds {
-  border-color: rgb(64, 68, 71) !important;
-}
-
 .camOptgroup {
   background-color: #eee;
   color: black;
@@ -892,7 +878,170 @@ d-grid {
   color: #555 !important;
 }
 
-kbd.bg-openbuilds>a {
-  text-decoration: none;
-  color: #fff;
+/* Toolpath Modal UX */
+.cam-modal-body .input-addon {
+  margin-bottom: 6px;
+}
+.cam-modal-body .input-addon input {
+  height: 28px !important;
+  font-size: 13px;
+}
+.cam-modal-body .input-addon .input-addon-label-left,
+.cam-modal-body .input-addon .input-addon-label-right {
+  padding: 0 8px;
+  font-size: 12px;
+  line-height: 28px;
+  background: #f0f0f0;
+  border: 1px solid #d9d9d9;
+}
+.cam-modal-body .input-addon .input-addon-label-left {
+  border-right: none;
+  border-radius: 3px 0 0 3px;
+  min-width: 32px;
+  text-align: center;
+}
+.cam-modal-body .input-addon .input-addon-label-right {
+  border-left: none;
+  border-radius: 0 3px 3px 0;
+}
+.cam-modal-body .input-addon input {
+  border-radius: 0 !important;
+}
+.cam-modal-body label.text-small {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 2px;
+  display: block;
+}
+.cam-modal-body h6.text-small {
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+.cam-divider {
+  margin: 12px 0;
+  border-color: #e8e8e8;
+}
+
+/* Floating Sidebar Overlay */
+#sidebar-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  background: #fff;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+  z-index: 5000;
+  display: flex;
+  flex-direction: row;
+  transition: width 0.25s ease;
+  overflow: hidden;
+}
+#sidebar-overlay.sidebar-closed {
+  width: 34px;
+}
+#sidebar-overlay.sidebar-open {
+  width: 380px;
+}
+
+/* Content area (hidden when closed) */
+.sidebar-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#sidebar-overlay.sidebar-closed .sidebar-content {
+  display: none;
+}
+
+.sidebar-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+/* Always-visible handle on the right edge */
+.sidebar-handle {
+  width: 34px;
+  flex-shrink: 0;
+  background: #f0f0f0;
+  border-left: 1px solid #ddd;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.sidebar-handle:hover {
+  background: #e8e8e8;
+}
+
+/* Labels shown when closed */
+.sidebar-handle-labels {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+}
+#sidebar-overlay.sidebar-open .sidebar-handle-labels {
+  display: none;
+}
+.sidebar-handle-labels span {
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+  padding: 10px 0;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #e0e0e0;
+  transition: color 0.15s, background 0.15s;
+}
+.sidebar-handle-labels span:hover {
+  color: #333;
+  background: #e0e0e0;
+}
+.sidebar-handle-labels span:last-child {
+  border-bottom: none;
+}
+
+/* Collapse icon shown when open */
+.sidebar-handle-collapse {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  width: 100%;
+  color: #888;
+  font-size: 16px;
+}
+#sidebar-overlay.sidebar-open .sidebar-handle-collapse {
+  display: flex;
+}
+.sidebar-handle-collapse:hover {
+  color: #333;
+  background: #e0e0e0;
+}
+
+/* Responsive: narrower sidebar on small screens */
+@media (max-width: 768px) {
+  #sidebar-overlay.sidebar-open {
+    width: calc(100vw - 48px);
+  }
+}
+
+/* Responsive: narrower sidebar on small screens */
+@media (max-width: 768px) {
+  #sidebar-overlay.sidebar-open {
+    width: calc(100vw - 48px);
+  }
+}
 }

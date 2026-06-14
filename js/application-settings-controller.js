@@ -200,35 +200,41 @@ function selectToolhead(type) {
 
   console.log("Selecting toolhead type: ", type)
   if (type == 'router' && $("#hasRouter").is(':checked')) {
-    // $('#hasRouter').prop('checked', false);
     $('#hasPlasma').prop('checked', false);
     $('#hasLaser').prop('checked', false);
     $('#hasPenPlotter').prop('checked', false);
     $('#hasSpindle').prop('checked', false);
+    $('#hasSpindleAtSpeed').prop('checked', false);
   } else if (type == 'plasma' && $("#hasPlasma").is(':checked')) {
     $('#hasRouter').prop('checked', false);
-    // $('#hasPlasma').prop('checked', false);
     $('#hasLaser').prop('checked', false);
     $('#hasPenPlotter').prop('checked', false);
     $('#hasSpindle').prop('checked', false);
+    $('#hasSpindleAtSpeed').prop('checked', false);
   } else if (type == 'laser' && $("#hasLaser").is(':checked')) {
     $('#hasRouter').prop('checked', false);
     $('#hasPlasma').prop('checked', false);
-    // $('#hasLaser').prop('checked', false);
     $('#hasPenPlotter').prop('checked', false);
     $('#hasSpindle').prop('checked', false);
+    $('#hasSpindleAtSpeed').prop('checked', false);
   } else if (type == 'penPlotter' && $("#hasPenPlotter").is(':checked')) {
     $('#hasRouter').prop('checked', false);
     $('#hasPlasma').prop('checked', false);
     $('#hasLaser').prop('checked', false);
-    // $('#hasPenPlotter').prop('checked', false);
     $('#hasSpindle').prop('checked', false);
+    $('#hasSpindleAtSpeed').prop('checked', false);
   } else if (type == 'spindle' && $("#hasSpindle").is(':checked')) {
     $('#hasRouter').prop('checked', false);
     $('#hasPlasma').prop('checked', false);
     $('#hasLaser').prop('checked', false);
     $('#hasPenPlotter').prop('checked', false);
-    // $('#hasSpindle').prop('checked', false);
+    $('#hasSpindleAtSpeed').prop('checked', false);
+  } else if (type == 'spindleAtSpeed' && $("#hasSpindleAtSpeed").is(':checked')) {
+    $('#hasRouter').prop('checked', false);
+    $('#hasPlasma').prop('checked', false);
+    $('#hasLaser').prop('checked', false);
+    $('#hasPenPlotter').prop('checked', false);
+    $('#hasSpindle').prop('checked', false);
   }
 
   // Default grbl parameters
@@ -264,8 +270,20 @@ function selectToolhead(type) {
     endcode += "M5 S0; Spindle Off\n"
     $('#scommandscale').val(24000);
     localStorage.setItem("hasSpindle", true);
+    localStorage.setItem("hasSpindleAtSpeed", false);
   } else {
     localStorage.setItem("hasSpindle", false);
+  }
+
+  if ($("#hasSpindleAtSpeed").is(':checked')) {
+    endcode += "M5 S0; Spindle Off\n"
+    $('#scommandscale').val(24000);
+    localStorage.setItem("hasSpindleAtSpeed", true);
+    localStorage.setItem("hasSpindle", false);
+  } else {
+    if (!$("#hasSpindle").is(':checked')) {
+      localStorage.setItem("hasSpindleAtSpeed", false);
+    }
   }
 
   if ($("#hasPlasma").is(':checked')) {
@@ -320,149 +338,7 @@ function selectToolhead(type) {
   console.log("Plasma Touchoff Macro: ", $("#ihsgcode").val())
 }
 
-function selectMachine(type) {
-  console.log("Loading Machine Template")
-  if (type == "sphinx55") {
-    var xaxis = 333
-    var yaxis = 325
-    var zaxis = 85
-    //$('#toolheadSelect').data('select').val('spindleonoff')
-  } else if (type == "sphinx1050") {
-    var xaxis = 833
-    var yaxis = 325
-    var zaxis = 85
-    //$('#toolheadSelect').data('select').val('spindleonoff')
-  } else if (type == "workbee1050") {
-    var xaxis = 335
-    var yaxis = 760
-    var zaxis = 122
-    //$('#toolheadSelect').data('select').val('spindleonoff')
-  } else if (type == "workbee1010") {
-    var xaxis = 824
-    var yaxis = 780
-    var zaxis = 122
-    //$('#toolheadSelect').data('select').val('spindleonoff')
-  } else if (type == "workbee1510") {
-    var xaxis = 824
-    var yaxis = 1280
-    var zaxis = 122
-    //$('#toolheadSelect').data('select').val('spindleonoff')
-  } else if (type == "acro55") {
-    var xaxis = 300
-    var yaxis = 300
-    var zaxis = 0
-    //$('#toolheadSelect').data('select').val('laserm4')
-  } else if (type == "acro510") {
-    var xaxis = 800
-    var yaxis = 300
-    var zaxis = 0
-    //$('#toolheadSelect').data('select').val('laserm4')
-  } else if (type == "acro1010") {
-    var xaxis = 800
-    var yaxis = 800
-    var zaxis = 0
-    //$('#toolheadSelect').data('select').val('laserm4')
-  } else if (type == "acro1510") {
-    var xaxis = 1300
-    var yaxis = 800
-    var zaxis = 0
-    //$('#toolheadSelect').data('select').val('laserm4')
-  } else if (type == "acro1515") {
-    var xaxis = 1300
-    var yaxis = 1300
-    var zaxis = 0
-    //$('#toolheadSelect').data('select').val('laserm4')
-  } else if (type == "acroA1") {
-    var xaxis = 863
-    var yaxis = 609
-    var zaxis = 0
-    selectToolhead('penPlotter');
-    //$('#toolheadSelect').data('select').val('laserm4')
-  } else if (type == "minimill") {
-    var xaxis = 120
-    var yaxis = 195
-    var zaxis = 80
-    //$('#toolheadSelect').data('select').val('spindleonoff')
-  } else if (type == "cbeam") {
-    var xaxis = 350
-    var yaxis = 280
-    var zaxis = 32
-    //$('#toolheadSelect').data('select').val('spindleonoff')
-  } else if (type == "cbeamxl") {
-    var xaxis = 750
-    var yaxis = 330
-    var zaxis = 51
-    //$('#toolheadSelect').data('select').val('spindleonoff')
-  } else if (type == "leadmachine1515") {
-    var xaxis = 1170
-    var yaxis = 1250
-    var zaxis = 90
-    //$('#toolheadSelect').data('select').val('spindleonoff')
-  } else if (type == "leadmachine1010") {
-    var xaxis = 730
-    var yaxis = 810
-    var zaxis = 90
-    //$('#toolheadSelect').data('select').val('spindleonoff')
-  } else if (type == "custom") {
-    var xaxis = 1000
-    var yaxis = 1000
-    var zaxis = 100
-    //$('#toolheadSelect').data('select').val('spindleonoff')
-  }
-  $("#machinetype").val(type)
-  $("#sizexmax").val(xaxis)
-  $("#sizeymax").val(yaxis)
-  $("#sizezmax").val(zaxis)
-  setMachineButton(type);
-};
-
 function setMachineButton(type) {
-  console.log(type)
-
-  // Set Dropdown menu selected option in Settings modal
-  if (type == "sphinx55") {
-    template = `<img src="images/mch/` + type + `.png"/>  OpenBuilds Sphinx 55`
-  } else if (type == "sphinx1050") {
-    template = `<img src="images/mch/` + type + `.png"/>  OpenBuilds Sphinx 1050`
-  } else if (type == "workbee1050") {
-    template = `<img src="images/mch/` + type + `.png"/>  OpenBuilds Workbee 1050`
-  } else if (type == "workbee1010") {
-    template = `<img src="images/mch/` + type + `.png"/>  OpenBuilds Workbee 1010`
-  } else if (type == "workbee1510") {
-    template = `<img src="images/mch/` + type + `.png"/>  OpenBuilds Workbee 1510`
-  } else if (type == "sphinx1050") {
-    template = `<img src="images/mch/` + type + `.png"/>  OpenBuilds Sphinx 1050`
-  } else if (type == "sphinx1050") {
-    template = `<img src="images/mch/` + type + `.png"/>  OpenBuilds Sphinx 1050`
-  } else if (type == "acro55") {
-    template = `<img src="images/mch/` + type + `.png"/>  OpenBuilds Acro 55`
-  } else if (type == "acro510") {
-    template = `<img src="images/mch/` + type + `.png"/>  OpenBuilds Acro 510`
-  } else if (type == "acro1010") {
-    template = `<img src="images/mch/` + type + `.png"/>  OpenBuilds Acro 1010`
-  } else if (type == "acro1510") {
-    template = `<img src="images/mch/` + type + `.png"/>  OpenBuilds Acro 1510`
-  } else if (type == "acro1515") {
-    template = `<img src="images/mch/` + type + `.png"/>  OpenBuilds Acro 1515`
-  } else if (type == "acroA1") {
-    template = `<img src="images/mch/` + type + `.png"/>  OpenBuilds ACRO A1`
-  } else if (type == "minimill") {
-    template = `<img src="images/mch/` + type + `.png"/>  OpenBuilds MiniMill`
-  } else if (type == "cbeam") {
-    template = `<img src="images/mch/` + type + `.png"/>  OpenBuilds C-Beam Machine`
-  } else if (type == "cbeamxl") {
-    template = `<img src="images/mch/` + type + `.png"/>  OpenBuilds C-Beam XL`
-  } else if (type == "leadmachine1515") {
-    template = `<img src="images/mch/` + type + `.png"/>  OpenBuilds LEAD 1515`
-  } else if (type == "leadmachine1010") {
-    template = `<img src="images/mch/` + type + `.png"/>  OpenBuilds LEAD 1010`
-  } else if (type == "leadmachine1010") {
-    template = `<img src="images/mch/` + type + `.png"/>  CUSTOM`
-  } else {
-    template = `<img src="images/mch/sphinx55.png"/>  Select Machine`
-  }
-  $('#context_toggle2').html(template);
-
   // Tick add-on checkboxes
   if (localStorage.getItem("hasPlasma") == 'true') {
     $("#hasPlasma").attr('checked', true)
@@ -472,6 +348,9 @@ function setMachineButton(type) {
   }
   if (localStorage.getItem("hasSpindle") == 'true') {
     $("#hasSpindle").attr('checked', true)
+  }
+  if (localStorage.getItem("hasSpindleAtSpeed") == 'true') {
+    $("#hasSpindleAtSpeed").attr('checked', true)
   }
   if (localStorage.getItem("hasDust") == 'true') {
     $("#hasDust").attr('checked', true)
@@ -483,12 +362,6 @@ function setMachineButton(type) {
     $("#hasPenPlotter").attr('checked', true)
   }
 
-  // workaround for Lead Plasma specifically (not quite a modular machine, has its own picture on front page overlay)
-  if (type == "leadmachine1010" && localStorage.getItem("hasPlasma") == 'true') {
-    $('#overlayimg').html(`<img src="images/mch/leadmachine1010plasma.png" style="max-width:100%; max-height:100%;"/>`)
-  } else {
-    $('#overlayimg').html(`<img src="images/mch/` + type + `.png" style="max-width:100%; max-height:100%;"/>`)
-  }
 };
 
 $(document).ready(function() {
@@ -507,42 +380,23 @@ $(document).ready(function() {
           <ul class="step-list mb-3">
 
             <li>
-              <h6>Select your Machine<br><small>Tell us what machine you have?</small></h6>
+              <h6>Machine Size<br><small>Set your machine's working area dimensions in mm</small></h6>
               <div>
-                <a style="width: 100%;" class="button dropdown-toggle bd-openbuilds outline" id="context_toggle2"><img src="images/mch/sphinx55.png"/> Select Machine</a>
-                <ul class="ribbon-dropdown" data-role="dropdown" data-duration="100">
-                    <li>
-                      <a href="#" class="dropdown-toggle"><img src="images/mch/acro55.png" width="16px"/> OpenBuilds ACRO</a>
-                      <ul class="ribbon-dropdown" data-role="dropdown">
-                        <li onclick="selectMachine('acro55');"><a href="#"><img src="images/mch/acro55.png" width="16px"/>  OpenBuilds ACRO 55</a></li>
-                        <li onclick="selectMachine('acro510');"><a href="#"><img src="images/mch/acro510.png" width="16px"/>  OpenBuilds ACRO 510</a></li>
-                        <li onclick="selectMachine('acro1010');"><a href="#"><img src="images/mch/acro1010.png" width="16px"/>  OpenBuilds ACRO 1010</a></li>
-                        <li onclick="selectMachine('acro1510');"><a href="#"><img src="images/mch/acro1510.png" width="16px"/>  OpenBuilds ACRO 1510</a></li>
-                        <li onclick="selectMachine('acro1515');"><a href="#"><img src="images/mch/acro1515.png" width="16px"/>  OpenBuilds ACRO 1515</a></li>
-                        <li class="divider"></li>
-                        <li onclick="selectMachine('acroA1');"><a href="#"><img src="images/mch/acroA1.png" width="16px"/>  OpenBuilds ACRO A1</a></li>
-                      </ul>
-                    </li>
-                    <li>
-                      <a href="#" class="dropdown-toggle"><img src="images/mch/cbeam.png" width="16px"/>  OpenBuilds C-Beam Machine</a>
-                      <ul class="ribbon-dropdown" data-role="dropdown">
-                        <li onclick="selectMachine('cbeam');"><a href="#"><img src="images/mch/cbeam.png" width="16px"/>  OpenBuilds C-Beam Machine</a></li>
-                        <li onclick="selectMachine('cbeamxl');"><a href="#"><img src="images/mch/cbeamxl.png" width="16px"/>  OpenBuilds C-Beam XL</a></li>
-                      </ul>
-                    </li>
-                    <li>
-                      <a href="#" class="dropdown-toggle"><img src="images/mch/leadmachine1010.png" width="16px"/>  OpenBuilds LEAD Machine</a>
-                      <ul class="ribbon-dropdown" data-role="dropdown">
-                        <li onclick="selectMachine('leadmachine1010');"><a href="#"><img src="images/mch/leadmachine1010.png" width="16px"/>OpenBuilds LEAD 1010</a></li>
-                        <li onclick="selectMachine('leadmachine1515');"><a href="#"><img src="images/mch/leadmachine1515.png" width="16px"/>OpenBuilds LEAD 1515</a></li>
-                      </ul>
-                    </li>
-                    <li><a href="#" onclick="selectMachine('minimill');"><img src="images/mch/minimill.png" width="16px"/>  OpenBuilds MiniMill</a></li>
-
-                    <li><a href="#" onclick="selectMachine('custom');"><img src="images/mch/custom.png" width="16px"/>  Custom Machine</a></li>
-
-                  </ul>
-                <input type="hidden" class="form-control form-control-sm" id="machinetype" value="" >
+                <div class="row">
+                  <div class="cell-sm-4">
+                    <label class="mt-1">Width (X-Axis)</label>
+                    <input type="number" data-role="input" data-clear-button="false" class="form-control" id="sizexmax" value="200" data-append="mm" step="any">
+                  </div>
+                  <div class="cell-sm-4">
+                    <label class="mt-1">Depth (Y-Axis)</label>
+                    <input type="number" data-role="input" data-clear-button="false" class="form-control" id="sizeymax" value="200" data-append="mm" step="any">
+                  </div>
+                  <div class="cell-sm-4">
+                    <label class="mt-1">Height (Z-Axis)</label>
+                    <input type="number" data-role="input" data-clear-button="false" class="form-control" id="sizezmax" value="100" data-append="mm" step="any">
+                  </div>
+                </div>
+                <input type="hidden" id="machinetype" value="custom">
               </div>
             </li>
 
@@ -576,6 +430,11 @@ $(document).ready(function() {
                   <div class="image-checkbox-text">Variable Speed Spindle</div>
                 </li>
                 <li>
+                  <input type="checkbox" onchange="selectToolhead('spindleAtSpeed')" id="hasSpindleAtSpeed" />
+                  <label for="hasSpindleAtSpeed"><img src="./images/vfd.png" /></label>
+                  <div class="image-checkbox-text">Variable Speed Spindle<br>(At-Speed)</div>
+                </li>
+                <li>
                   <input type="checkbox" onchange="selectToolhead('dust')" id="hasDust" />
                   <label for="hasDust"><img src="./images/dustshoe.png" /></label>
                   <div class="image-checkbox-text">Dust Shoe with Extractor</div>
@@ -595,26 +454,7 @@ $(document).ready(function() {
 
                        <div>
 
-                         <div class="row mb-2">
-                             <label class="cell-sm-6">X-Axis Length</label>
-                             <div class="cell-sm-6">
-                               <input type="number" data-role="input" data-clear-button="false" class="form-control " id="sizexmax" value="200" data-append="mm" step="any">
-                             </div>
-                         </div>
 
-                         <div class="row mb-2">
-                             <label class="cell-sm-6">Y-Axis Length</label>
-                             <div class="cell-sm-6">
-                               <input type="number" data-role="input" data-clear-button="false" class="form-control " id="sizeymax" value="200" data-append="mm" step="any">
-                             </div>
-                         </div>
-
-                         <div class="row mb-2">
-                             <label class="cell-sm-6">Z-Axis Length</label>
-                             <div class="cell-sm-6">
-                               <input type="number" data-role="input" data-clear-button="false" class="form-control " id="sizezmax" value="100" data-append="mm" step="any">
-                             </div>
-                         </div>
 
                          <div class="row mb-2">
                              <label class="cell-sm-6">Spindle / Laser / Plasma Command</label>

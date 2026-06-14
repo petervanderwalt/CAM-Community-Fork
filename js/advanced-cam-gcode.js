@@ -190,10 +190,21 @@ function generateGcode(index, toolpathGrp, cutSpeed, plungeSpeed, spindleRpm, la
   } else {
     console.log(toolpathGrp)
 
-    if (localStorage.getItem("hasSpindle") == 'true') {
+    var hasSpindle = localStorage.getItem("hasSpindle") == 'true';
+    var hasSpindleAtSpeed = localStorage.getItem("hasSpindleAtSpeed") == 'true';
+
+    if (toolpathsInScene[index].userData.camToolNumber) {
+      if (toolpathsInScene[index].userData.camOperation.indexOf('CNC') == 0 || toolpathsInScene[index].userData.camOperation.indexOf('Drill') == 0) {
+        g += "M6 T" + toolpathsInScene[index].userData.camToolNumber + "; Select Tool T" + toolpathsInScene[index].userData.camToolNumber + "\n";
+      }
+    }
+
+    if (hasSpindle || hasSpindleAtSpeed) {
       if (toolpathsInScene[index].userData.camOperation.indexOf('CNC') == 0 || toolpathsInScene[index].userData.camOperation.indexOf('Drill') == 0) {
         g += `M3 S` + spindleRpm + `; Start Spindle\n`
-        g += `G4 P8; Wait 8 seconds for spindle to spin up to speed\n`
+        if (!hasSpindleAtSpeed) {
+          g += `G4 P8; Wait 8 seconds for spindle to spin up to speed\n`
+        }
       }
     }
 
@@ -439,7 +450,7 @@ function generateGcode(index, toolpathGrp, cutSpeed, plungeSpeed, spindleRpm, la
               g += " Y" + ypos.toFixed(4);
               g += " Z" + zpos.toFixed(4);
 
-              if (localStorage.getItem("hasSpindle") == 'true') {
+              if (localStorage.getItem("hasSpindle") == 'true' || localStorage.getItem("hasSpindleAtSpeed") == 'true') {
                 if (toolpathsInScene[index].userData.camOperation.indexOf('CNC') == 0 || toolpathsInScene[index].userData.camOperation.indexOf('Drill') == 0) {
                   g += " " + s + spindleRpm + "\n";
                 }

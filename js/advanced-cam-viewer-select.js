@@ -379,7 +379,13 @@ function mouseMove(event) {
             var obj = objectsInScene[i];
             obj.traverse(function(child) {
               if (child.type == "Line") {
-                child.userData.hover = false;
+                if (child.userData.hover) {
+                  if (child.userData.originalColor !== undefined) {
+                    child.material.color.setHex(child.userData.originalColor);
+                    delete child.userData.originalColor;
+                  }
+                  child.userData.hover = false;
+                }
               };
             });
           }
@@ -394,22 +400,20 @@ function mouseMove(event) {
           } else if (mouseState = "scale") {
             $('#renderArea').css('cursor', 'pointer');
           }
-          hoverShapesinScene.length = 0;
+          var hoverColor = mouseState == "delete" ? 0x880000 : 0x0088ff;
           if (mouseState == "scale" || (mouseState == "move" && !event.ctrlKey && !event.altKey) || (mouseState == "delete" && event.ctrlKey) || (mouseState == "delete" && event.altKey)) {
             obj = obj.parent
             obj.traverse(function(child) {
               if (child.type == "Line") {
                 if (selectCount == 0) {
                   child.userData.hover = true;
-                  if (mouseState == "delete") {
-                    hoverShapesinScene.push(shapeFromLine(child, 0x880000, 0.4))
-                  } else {
-                    hoverShapesinScene.push(shapeFromLine(child, 0x0088ff, 0.4))
-                  }
+                  child.userData.originalColor = child.material.color.getHex();
+                  child.material.color.setHex(hoverColor);
                 } else {
                   if (mouseState == "move" && child.userData.selected) {
                     child.userData.hover = true;
-                    hoverShapesinScene.push(shapeFromLine(child, 0x0088ff, 0.4))
+                    child.userData.originalColor = child.material.color.getHex();
+                    child.material.color.setHex(hoverColor);
                   }
                 }
               }
@@ -419,24 +423,25 @@ function mouseMove(event) {
             obj.traverse(function(child) {
               if (child.type == "Line") {
                 child.userData.hover = true;
-                if (mouseState == "delete") {
-                  hoverShapesinScene.push(shapeFromLine(child, 0x880000, 0.4))
-                } else {
-                  hoverShapesinScene.push(shapeFromLine(child, 0x0088ff, 0.4))
-                }
+                child.userData.originalColor = child.material.color.getHex();
+                child.material.color.setHex(hoverColor);
               }
             });
             clearSceneFlag = true;
           }
         } else { // hovering over nothing
           $('#renderArea').css('cursor', '');
-          hoverShapesinScene.length = 0;
-          clearSceneFlag = true;
           for (i = 0; i < objectsInScene.length; i++) {
             var obj = objectsInScene[i];
             obj.traverse(function(child) {
               if (child.type == "Line") {
-                child.userData.hover = false;
+                if (child.userData.hover) {
+                  if (child.userData.originalColor !== undefined) {
+                    child.material.color.setHex(child.userData.originalColor);
+                    delete child.userData.originalColor;
+                  }
+                  child.userData.hover = false;
+                }
               };
             });
           }
