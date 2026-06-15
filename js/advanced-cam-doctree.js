@@ -126,12 +126,12 @@ function animateTree() {
   if (selectCount > 0) {
     $("#tpaddpathParent").prop('disabled', false).removeClass('disabled')
     $("#tpaddpath").prop('disabled', false);
-    $('#addJobBtn,#addJobMenuBtn,#floatAddJobBtn,#floatAddJobMenuBtn').addClass('success').prop('disabled', false)
-    $("#tpaddicon").addClass('fg-green')
+    $('#addJobBtn,#addJobMenuBtn,#floatAddJobBtn,#floatAddJobMenuBtn').addClass('cf-btn-green').prop('disabled', false)
+    $("#tpaddicon").addClass('cf-text-green')
     $(".cf-addjob-text").html("Create Toolpath using (" + selectCount + ") selected vectors");
 
     if (toolpathsInScene.length > 0) {
-      $("#remJobBtn").addClass('bg-green').addClass('fg-white').removeClass('disabled');
+      $("#remJobBtn").addClass('cf-btn-green').removeClass('disabled');
       $("#tpaddpath-dropdown").prop('disabled', false);
       $("#addJobMenuBtn,#floatAddJobMenuBtn").show()
     } else {
@@ -140,9 +140,9 @@ function animateTree() {
 
   } else {
     $("#tpaddpathParent").prop('disabled', true).addClass('disabled');
-    $("#tpaddicon").removeClass('fg-green')
+    $("#tpaddicon").removeClass('cf-text-green')
     $("#tpaddpath").prop('disabled', true);
-    $('#addJobBtn,#remJobBtn,#addJobMenuBtn,#floatAddJobBtn,#floatAddJobMenuBtn').removeClass('success').prop('disabled', true)
+    $('#addJobBtn,#remJobBtn,#addJobMenuBtn,#floatAddJobBtn,#floatAddJobMenuBtn').removeClass('cf-btn-green').prop('disabled', true)
     $("#tpaddpath-dropdown").prop('disabled', true);
     $(".cf-addjob-text").html("Please select Vector(s) to create toolpaths");
   }

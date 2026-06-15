@@ -326,8 +326,7 @@ button:focus {
   position: relative;
   display: inline-block;
   width: 100% !important;
-  height: calc(100% - 150px);
-   !important;
+  height: calc(100% - 60px);
   border-bottom: 1px solid #ccc;
 }
 
@@ -819,10 +818,6 @@ d-grid {
   background-color: white;
   color: black;
   font-size: 16px;
-}
-
-.step-list>li::before {
-  color: #555 !important;
 }
 
 /* Toolpath Modal UX */

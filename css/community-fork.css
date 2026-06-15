@@ -301,6 +301,27 @@
   padding: 6px 8px;
 }
 
+/* ── Tab button for transforms modal ── */
+.cf-btn-tab {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+  padding: 6px 10px;
+  background: #f0f0f0;
+  color: #555;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.cf-btn-tab.active {
+  background: #1979ca;
+  color: #fff;
+  border-color: #1979ca;
+}
+.cf-btn-tab:hover:not(.active) {
+  background: #e0e0e0;
+}
+
 /* ── Buttons (replaces Metro4 .button.drop-shadow) ── */
 .cf-btn {
   display: inline-flex;
@@ -558,11 +579,111 @@
   border-left: 1px solid rgba(255,255,255,0.3);
 }
 
-/* ── Responsive sidebar ── */
-@media (max-width: 768px) {
-  #sidebar-overlay.sidebar-open {
-    width: calc(100vw - 48px);
-  }
+/* ── Main toolbar (replaces Metro4 ribbon menu) ── */
+/* Override Metro4 window-content height — caption bar removed */
+.window-content {
+  height: 100% !important;
+}
+/* Metro4 stand-ins in case Metro4 CSS is removed */
+.window.drop-shadow {
+  background: #fff;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.h-100 { height: 100%; }
+
+.cf-main-toolbar {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 6px;
+  background: #fafafa;
+  border-bottom: 1px solid #e0e0e0;
+  gap: 2px;
+}
+.cf-main-toolbar .cf-btn.cf-tb-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  height: 36px;
+  min-width: 36px;
+  padding: 2px 6px;
+  font-size: 14px;
+  background: #fff;
+  color: #555;
+  border: 1px solid #e0e0e0;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.cf-main-toolbar .cf-btn.cf-tb-btn:hover {
+  background: #f0f0f0;
+  border-color: #ccc;
+  color: #222;
+}
+.cf-main-toolbar .cf-btn.cf-tb-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.cf-main-toolbar .cf-btn.cf-tb-btn .cf-tb-label {
+  font-size: 8px;
+  line-height: 1.2;
+  color: #777;
+  margin-top: 1px;
+}
+.cf-main-toolbar .cf-btn.cf-tb-btn:hover .cf-tb-label {
+  color: #444;
+}
+.cf-main-toolbar .cf-btn.cf-tb-split-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 4px;
+  font-size: 8px;
+  background: #fff;
+  color: #555;
+  border: 1px solid #e0e0e0;
+  border-left: none;
+  border-radius: 0 3px 3px 0;
+  cursor: pointer;
+}
+.cf-main-toolbar .cf-btn.cf-tb-split-toggle:hover {
+  background: #f0f0f0;
+  border-color: #ccc;
+  color: #222;
+}
+.cf-main-toolbar .cf-tb-split .cf-tb-btn {
+  border-radius: 3px 0 0 3px;
+  border-right: 1px solid #e0e0e0;
+}
+.cf-tb-sep {
+  width: 1px;
+  height: 22px;
+  background: #ddd;
+  margin: 0 5px;
+  flex-shrink: 0;
+}
+.cf-tb-split {
+  display: inline-flex;
+  align-items: stretch;
+  position: relative;
+}
+.cf-tb-split .cf-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 2px;
+}
+.cf-main-toolbar .btn-file input[type=file],
+.cf-tb-split .btn-file input[type=file] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }
 
 /* ── Tree view (replaces Metro4 data-role="treeview") ── */
@@ -655,6 +776,23 @@
   margin-left: auto;
   font-size: 10px;
   color: #999;
+}
+
+/* ── Scale/Transform window (floating panel, not full modal) ── */
+#scalewindow {
+  position: fixed;
+  z-index: 5000;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+#scalewindow .cf-modal-overlay {
+  position: static;
+  background: none;
+  pointer-events: auto;
+}
+#scalewindow .cf-modal {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
 }
 
 /* ════════════════════════════════════════════════
@@ -778,6 +916,8 @@ body.cf-modal-open {
 /* Text / Color */
 .cf-text-muted { color: #888; }
 .cf-text-danger { color: #e53935; }
+.cf-text-green  { color: #43a047; }
+.cf-text-white  { color: #fff; }
 .cf-text-center { text-align: center; }
 
 /* Layout */
@@ -810,10 +950,333 @@ body.cf-modal-open {
   margin: 2px 0;
 }
 
+/* ── Base font ── */
+body, button, input, select, textarea {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+/* ── Toast notifications (replaces Metro.toast.create) ── */
+#cf-toast-container {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+}
+.cf-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  max-width: 400px;
+  animation: cfToastIn 0.25s ease-out;
+}
+@keyframes cfToastIn {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.cf-toast-fade {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+.cf-toast-msg { flex: 1; }
+.cf-toast-close {
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+.cf-toast-close:hover { opacity: 1; }
+.cf-toast-red   { background: #e53935; }
+.cf-toast-green { background: #43a047; }
+.cf-toast-amber { background: #fb8c00; }
+
 /* Spinner label */
 .cf-spinner-label {
   display: none;
   margin-top: 6px;
   color: #999;
   font-size: 11px;
+}
+
+/* ── Toolpath modal input addons ── */
+#statusBody2 .input-addon {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+#statusBody2 .input-addon-label-left,
+#statusBody2 .input-addon-label-right {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: auto;
+  min-width: 28px;
+  padding: 4px 6px;
+  margin: 0;
+  background: #f5f5f5;
+  border: 1px solid #d0d0d0;
+  color: #666;
+  font-size: 12px;
+  line-height: 1;
+}
+#statusBody2 .input-addon-label-left {
+  border-right: none;
+  border-radius: 3px 0 0 3px;
+}
+#statusBody2 .input-addon-label-right {
+  border-left: none;
+  border-radius: 0 3px 3px 0;
+}
+#statusBody2 .cam-form-field {
+  flex: 1;
+  width: auto;
+  min-width: 60px;
+  padding: 4px 6px;
+  margin: 0;
+  font-size: 12px;
+  border: 1px solid #d0d0d0;
+  border-radius: 3px;
+  background: #fff;
+  color: #333;
+  outline: none;
+  box-sizing: border-box;
+  height: 28px;
+}
+#statusBody2 .input-addon-label-left + .cam-form-field {
+  border-left: none;
+  border-radius: 0;
+}
+#statusBody2 .input-addon-label-left + .cam-form-field:not(:has(+ .input-addon-label-right)) {
+  border-radius: 0 3px 3px 0;
+}
+#statusBody2 .cam-form-field:has(+ .input-addon-label-right) {
+  border-right: none;
+}
+
+#statusBody2 .cam-form-field:focus {
+  border-color: #1979ca;
+  box-shadow: inset 0 0 2px rgba(25,121,202,0.3);
+}
+/* Selects inside input-addon */
+#statusBody2 .input-addon select.cam-form-field {
+  min-width: 80px;
+}
+/* Tables inside toolpath modal */
+#statusBody2 table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 4px;
+}
+#statusBody2 table td {
+  padding: 3px 4px;
+  vertical-align: middle;
+  font-size: 12px;
+}
+#statusBody2 table tr:nth-child(even) {
+  background: #f7f8f9;
+}
+#statusBody2 table td:first-child {
+  width: 50%;
+  white-space: nowrap;
+  color: #555;
+}
+#statusBody2 table td:last-child {
+  padding-right: 8px;
+}
+
+/* ── Settings modal components ── */
+.cf-settings-section {
+  margin-bottom: 20px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+.cf-settings-section:last-child {
+  border-bottom: none;
+}
+.cf-settings-section h6 {
+  margin: 0 0 2px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+.cf-settings-desc {
+  margin: 0 0 10px 0;
+  font-size: 12px;
+  color: #888;
+}
+.cf-settings-label {
+  display: block;
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 3px;
+}
+.cf-input {
+  width: 100%;
+  padding: 5px 8px;
+  font-size: 13px;
+  border: 1px solid #d0d0d0;
+  border-radius: 3px;
+  background: #fff;
+  color: #333;
+  box-sizing: border-box;
+}
+.cf-input:focus {
+  outline: none;
+  border-color: #1979ca;
+  box-shadow: 0 0 3px rgba(25,121,202,0.3);
+}
+.cf-input-suffix {
+  display: block;
+  font-size: 11px;
+  color: #aaa;
+  margin-top: 2px;
+}
+.cf-textarea {
+  width: 100%;
+  min-height: 50px;
+  padding: 5px 8px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', Consolas, monospace;
+  border: 1px solid #d0d0d0;
+  border-radius: 3px;
+  background: #fff;
+  color: #333;
+  box-sizing: border-box;
+  resize: vertical;
+}
+.cf-textarea:focus {
+  outline: none;
+  border-color: #1979ca;
+  box-shadow: 0 0 3px rgba(25,121,202,0.3);
+}
+
+/* Checkbox column */
+.cf-check-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cf-check-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 3px;
+  font-size: 13px;
+  color: #333;
+  user-select: none;
+}
+.cf-check-row:hover {
+  background: #f0f4f8;
+}
+.cf-check-row input[type="checkbox"] {
+  display: none;
+}
+.cf-check-mark {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  background: #fff;
+  flex-shrink: 0;
+  position: relative;
+}
+.cf-check-row input:checked + .cf-check-mark {
+  background: #1979ca;
+  border-color: #1979ca;
+}
+.cf-check-row input:checked + .cf-check-mark::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.cf-check-text {
+  font-size: 13px;
+  color: #333;
+}
+
+/* Advanced settings rows */
+.cf-adv-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.cf-adv-row .cf-btn {
+  flex-shrink: 0;
+}
+.cf-adv-label {
+  width: 220px;
+  flex-shrink: 0;
+  font-size: 12px;
+  color: #555;
+  padding-top: 5px;
+}
+.cf-adv-row > .cf-input,
+.cf-adv-row > .cf-textarea {
+  flex: 1;
+}
+.cf-adv-row > div {
+  flex: 1;
+}
+
+/* ════════════════════════════════════════════════
+   ── Responsive / Mobile adjustments
+   ════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Sidebar: nearly full-width when open */
+  #sidebar-overlay.sidebar-open {
+    width: calc(100vw - 48px);
+  }
+}
+
+@media (max-width: 600px) {
+  /* Sidebar full-width when open */
+  #sidebar-overlay.sidebar-open {
+    width: 100vw;
+  }
+  /* Floating button: larger touch target */
+  #cf-float-tp .cf-btn {
+    font-size: 14px;
+    height: 36px;
+    padding: 0 14px;
+  }
+  /* Toolbar compact: smaller buttons, hide labels */
+  .cf-main-toolbar {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 36px;
+    gap: 1px;
+    padding: 2px 4px;
+  }
+  .cf-main-toolbar .cf-btn.cf-tb-btn {
+    height: 30px;
+    min-width: 30px;
+    padding: 1px 4px;
+    font-size: 11px;
+  }
+  .cf-main-toolbar .cf-btn.cf-tb-btn .cf-tb-label {
+    display: none;
+  }
+  .cf-main-toolbar .cf-btn.cf-tb-split-toggle {
+    height: 30px;
+  }
 }

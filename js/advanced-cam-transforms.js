@@ -14,139 +14,83 @@ function showScaleWindow(object) {
   // console.log(width, height, left, bottom)
   var template = `
 
-  <ul data-role="tabs" data-expand="true">
-    <li><a href="#_SCALE">SCALE</a></li>
-    <li><a href="#_POSITION">POSITION</a></li>
-    <li><a href="#_ROTATION">ROTATION</a></li>
-  </ul>
+  <div style="display:flex;gap:2px;margin-bottom:8px">
+    <button class="cf-btn cf-btn-tab active" data-tab="SCALE" onclick="$('.cf-btn-tab').removeClass('active');$(this).addClass('active');$('.cf-tab').hide();$('#tr_SCALE').show()">Scale</button>
+    <button class="cf-btn cf-btn-tab" data-tab="POSITION" onclick="$('.cf-btn-tab').removeClass('active');$(this).addClass('active');$('.cf-tab').hide();$('#tr_POSITION').show()">Position</button>
+    <button class="cf-btn cf-btn-tab" data-tab="ROTATION" onclick="$('.cf-btn-tab').removeClass('active');$(this).addClass('active');$('.cf-tab').hide();$('#tr_ROTATION').show()">Rotation</button>
+  </div>
 
-
-    <div id="_SCALE" class="tab-pane fade show active">
-      <i class="fas fa-ruler"></i> <b>Scale</b>: <small>` + object.name + `</small>
-      <table style="width: 410px;">
+    <div id="tr_SCALE" class="cf-tab">
+      <p><i class="fas fa-ruler"></i> <b>Scale</b>: <small>` + object.name + `</small></p>
+      <table style="width:100%">
         <tr>
-          <td>Width: </td>
-          <td><i class="fas fa-ruler-horizontal fa-fw"></i></td>
+          <td style="width:60px">Width:</td>
+          <td style="width:24px"><i class="fas fa-ruler-horizontal fa-fw"></i></td>
           <td>
-            <div class="input-addon">
-              <input type="text" class="cam-form-field active-border" value="` + width + `" id="scaleWidth"  objectseq="` + i + `" style="text-align: right;">
-            </div>
+            <input type="text" class="cf-input" value="` + width + `" id="scaleWidth" objectseq="` + i + `" style="text-align:right">
           </td>
-          <td>mm</td>
+          <td style="width:30px;padding-left:4px">mm</td>
         </tr>
         <tr>
-          <td>Height: </td>
+          <td>Height:</td>
           <td><i class="fas fa-ruler-vertical fa-fw"></i></td>
           <td>
-            <div class="input-addon">
-              <input type="text" class="cam-form-field active-border" value="` + height + `" id="scaleHeight"  objectseq="` + i + `" style="text-align: right;">
-            </div>
+            <input type="text" class="cf-input" value="` + height + `" id="scaleHeight" objectseq="` + i + `" style="text-align:right">
           </td>
-          <td>mm</td>
+          <td style="padding-left:4px">mm</td>
         </tr>
       </table>
-      <button type="button" class="button alert" onclick="scalewindow.style.visibility = 'hidden';" aria-label="Close">
-        Cancel
-      </button>
-      <button type="button" class="button success" aria-label="Close" onclick="scaleObj()">
-        Apply
-      </button>
+      <div style="margin-top:8px;display:flex;gap:6px">
+        <button type="button" class="cf-btn cf-btn-red" onclick="scalewindow.style.visibility = 'hidden'">Cancel</button>
+        <button type="button" class="cf-btn cf-btn-green" onclick="scaleObj()">Apply</button>
+      </div>
     </div>
-    <div id="_POSITION" class="tab-pane fade">
-      <i class="far fa-clone"></i> <b>Position</b>: <small>` + object.name + `</small>
-      <table style="width: 410px;">
+    <div id="tr_POSITION" class="cf-tab" style="display:none">
+      <p><i class="far fa-clone"></i> <b>Position</b>: <small>` + object.name + `</small></p>
+      <table>
         <tr>
-          <td style="width: 50px;">
-          </td>
-          <td align="center" style="width: 100px;">
-            <i class="fas fa-align-left fa-fw"></i>
-          </td>
-          <td align="center"  style="width: 100px;">
-            <i class="fas fa-align-center fa-fw"></i>
-          </td>
-          <td align="center"  style="width: 100px;">
-            <i class="fas fa-align-right fa-fw"></i>
-          </td>
-          <td style="width: 50px;">
-          </td>
+          <td style="width:50px"></td>
+          <td align="center" style="width:90px"><i class="fas fa-align-left fa-fw"></i></td>
+          <td align="center" style="width:90px"><i class="fas fa-align-center fa-fw"></i></td>
+          <td align="center" style="width:90px"><i class="fas fa-align-right fa-fw"></i></td>
+          <td style="width:50px"></td>
         </tr>
         <tr>
-          <td>
-            <i class="fas fa-ruler-horizontal fa-fw"></i>
-          </td>
-          <td>
-            <div class="input-addon">
-              <input type="text" class="cam-form-field active-border" value="` + left + `" id="left"  objectseq="` + i + `" style="text-align: right;">
-            </div>
-          </td>
-          <td>
-            <div class="input-addon">
-              <input type="text" class="cam-form-field active-border" value="` + xcenter + `" id="xcenter"  objectseq="` + i + `" style="text-align: right;">
-            </div>
-          </td>
-          <td>
-            <div class="input-addon">
-              <input type="text" class="cam-form-field active-border" value="` + right + `" id="right"  objectseq="` + i + `" style="text-align: right;">
-            </div>
-          </td>
-          <td>
-            mm
-          </td>
+          <td><i class="fas fa-ruler-horizontal fa-fw"></i></td>
+          <td><input type="text" class="cf-input" value="` + left + `" id="left" objectseq="` + i + `" style="text-align:right"></td>
+          <td><input type="text" class="cf-input" value="` + xcenter + `" id="xcenter" objectseq="` + i + `" style="text-align:right"></td>
+          <td><input type="text" class="cf-input" value="` + right + `" id="right" objectseq="` + i + `" style="text-align:right"></td>
+          <td style="padding-left:4px">mm</td>
         </tr>
         <tr>
-          <td>
-            <i class="fas fa-ruler-vertical fa-fw"></i>
-          </td>
-          <td>
-            <div class="input-addon">
-              <input type="text" class="cam-form-field active-border" value="` + bottom + `" id="bottom"  objectseq="` + i + `" style="text-align: right;">
-            </div>
-          </td>
-          <td>
-            <div class="input-addon">
-              <input type="text" class="cam-form-field active-border" value="` + ycenter + `" id="ycenter"  objectseq="` + i + `" style="text-align: right;">
-            </div>
-          </td>
-          <td>
-            <div class="input-addon">
-              <input type="text" class="cam-form-field active-border" value="` + top + `" id="top"  objectseq="` + i + `" style="text-align: right;">
-            </div>
-          </td>
-          <td>
-            mm
-          </td>
+          <td><i class="fas fa-ruler-vertical fa-fw"></i></td>
+          <td><input type="text" class="cf-input" value="` + bottom + `" id="bottom" objectseq="` + i + `" style="text-align:right"></td>
+          <td><input type="text" class="cf-input" value="` + ycenter + `" id="ycenter" objectseq="` + i + `" style="text-align:right"></td>
+          <td><input type="text" class="cf-input" value="` + top + `" id="top" objectseq="` + i + `" style="text-align:right"></td>
+          <td style="padding-left:4px">mm</td>
         </tr>
       </table>
-      <button type="button" class="button alert" onclick="scalewindow.style.visibility = 'hidden';" aria-label="Close">
-        Cancel
-      </button>
-      <button type="button" class="button success" aria-label="Close" onclick="moveObj()">
-        Apply
-      </button>
+      <div style="margin-top:8px;display:flex;gap:6px">
+        <button type="button" class="cf-btn cf-btn-red" onclick="scalewindow.style.visibility = 'hidden'">Cancel</button>
+        <button type="button" class="cf-btn cf-btn-green" onclick="moveObj()">Apply</button>
+      </div>
     </div>
-    <div id="_ROTATION" class="tab-pane fade">
-    <i class="fas fa-undo"></i> <b>Rotation</b>: <small>` + object.name + `</small>
-      <table style="width: 410px;">
+    <div id="tr_ROTATION" class="cf-tab" style="display:none">
+      <p><i class="fas fa-undo"></i> <b>Rotation</b>: <small>` + object.name + `</small></p>
+      <table style="width:100%">
         <tr>
-          <td>Angle: </td>
+          <td style="width:60px">Angle:</td>
           <td>
-            <div class="input-addon">
-              <span class="input-addon-label-left active-border"><i class="fas fa-undo fa-fw"></i> </span>
-              <input type="text" class="cam-form-field active-border" value="45" id="rotationangle"  objectseq="` + i + `" style="text-align: right;">
-              <span class="input-addon-label-right active-border">&deg;</span>
-            </div>
+            <input type="text" class="cf-input" value="45" id="rotationangle" objectseq="` + i + `" style="text-align:right">
           </td>
+          <td style="width:30px;padding-left:4px">&deg;</td>
         </tr>
       </table>
-      <button type="button" class="button alert" onclick="scalewindow.style.visibility = 'hidden';" aria-label="Close">
-        Cancel
-      </button>
-      <button type="button" class="button success" aria-label="Close" onclick="rotateObj(1)">
-        Anticlockwise
-      </button>
-      <button type="button" class="button success" aria-label="Close" onclick="rotateObj(-1)">
-        Clockwise
-      </button>
+      <div style="margin-top:8px;display:flex;gap:6px">
+        <button type="button" class="cf-btn cf-btn-red" onclick="scalewindow.style.visibility = 'hidden'">Cancel</button>
+        <button type="button" class="cf-btn cf-btn-green" onclick="rotateObj(1)">Anticlockwise</button>
+        <button type="button" class="cf-btn cf-btn-green" onclick="rotateObj(-1)">Clockwise</button>
+      </div>
     </div>
   `;
   $('#scalewindowcontent').html(template)
@@ -200,7 +144,6 @@ function showScaleWindow(object) {
     $("#ycenter").val((parseFloat(ycenter) + parseFloat(diff)).toFixed(2));
     $("#top").val((parseFloat(top) + parseFloat(diff)).toFixed(2));
   });
-  Metro.init();
 }
 
 function scaleObj() {

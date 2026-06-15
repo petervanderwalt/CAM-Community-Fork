@@ -160,7 +160,7 @@ function remJob(id) {
     });
   } else {
     var message = `Toolpath container updated.`
-    Metro.toast.create(message, null, 4000, 'bg-green');
+    cfToast(message, 4000, 'green');
   }
 
   setTimeout(function() {

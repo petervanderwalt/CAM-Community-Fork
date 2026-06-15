@@ -44,7 +44,7 @@ function drawDXF(file, fileName) {
 
   if (errorcount > 0) {
     var message = fileName + " contained " + errorcount + " unsupported entities. These were ignored."
-    Metro.toast.create(message, null, 6000, 'bg-amber');
+    cfToast(message, 6000, 'amber');
   }
 
   fileObject.name = fileName;

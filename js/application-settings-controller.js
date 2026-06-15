@@ -252,7 +252,7 @@ function selectToolhead(type) {
   $('#startgcode').val("");
   $('#endgcode').val("");
   $("#ihsgcode").val("");
-  var startcode = `; Created by CAM Community Fork\nG54; Work Coordinates\nG21; mm-mode\nG90; Absolute Positioning\n`;
+  var startcode = `G54; Work Coordinates\nG21; mm-mode\nG90; Absolute Positioning\n`;
   var endcode = "";
 
   if ($("#hasRouter").is(':checked')) {
@@ -375,173 +375,153 @@ $(document).ready(function() {
       <div class="cf-modal-content" style="max-height: calc(100vh - 200px);overflow-y: auto; overflow-x: hidden;">
       <form>
 
-        <div>
-          <center><h6>Welcome to CAM Community Fork</h6> Let us help you get set up!</center>
+        <div style="text-align:center">
+          <h6>Welcome to CAM Community Fork</h6>
+          <p style="font-size:13px;color:#777">Let us help you get set up!</p>
         </div>
 
-          <ul class="step-list mb-3">
+        <div class="cf-settings-section">
+          <h6>Machine Size</h6>
+          <p class="cf-settings-desc">Set your machine's working area dimensions in mm</p>
+          <div class="cf-settings-row" style="display:flex;gap:12px">
+            <div style="flex:1">
+              <label class="cf-settings-label">Width (X-Axis)</label>
+              <input type="number" class="cf-input" id="sizexmax" value="200" step="any">
+              <span class="cf-input-suffix">mm</span>
+            </div>
+            <div style="flex:1">
+              <label class="cf-settings-label">Depth (Y-Axis)</label>
+              <input type="number" class="cf-input" id="sizeymax" value="200" step="any">
+              <span class="cf-input-suffix">mm</span>
+            </div>
+            <div style="flex:1">
+              <label class="cf-settings-label">Height (Z-Axis)</label>
+              <input type="number" class="cf-input" id="sizezmax" value="100" step="any">
+              <span class="cf-input-suffix">mm</span>
+            </div>
+          </div>
+          <input type="hidden" id="machinetype" value="custom">
+        </div>
 
-            <li>
-              <h6>Machine Size<br><small>Set your machine's working area dimensions in mm</small></h6>
+        <div class="cf-settings-section">
+          <h6>Add-Ons Installed</h6>
+          <p class="cf-settings-desc">Select the attachments your machine has so we can generate appropriate G-Code</p>
+
+          <div class="cf-check-col">
+            <label class="cf-check-row">
+              <input type="checkbox" onchange="selectToolhead('router')" id="hasRouter" />
+              <span class="cf-check-mark"></span>
+              <span class="cf-check-text">Router</span>
+            </label>
+            <label class="cf-check-row">
+              <input type="checkbox" onchange="selectToolhead('plasma')" id="hasPlasma" />
+              <span class="cf-check-mark"></span>
+              <span class="cf-check-text">Plasma Cutter</span>
+            </label>
+            <label class="cf-check-row">
+              <input type="checkbox" onchange="selectToolhead('laser')" id="hasLaser" />
+              <span class="cf-check-mark"></span>
+              <span class="cf-check-text">Laser Diode Module</span>
+            </label>
+            <label class="cf-check-row">
+              <input type="checkbox" onchange="selectToolhead('penPlotter')" id="hasPenPlotter" />
+              <span class="cf-check-mark"></span>
+              <span class="cf-check-text">Pen Lift</span>
+            </label>
+            <label class="cf-check-row">
+              <input type="checkbox" onchange="selectToolhead('spindle')" id="hasSpindle" />
+              <span class="cf-check-mark"></span>
+              <span class="cf-check-text">Variable Speed Spindle</span>
+            </label>
+            <label class="cf-check-row">
+              <input type="checkbox" onchange="selectToolhead('spindleAtSpeed')" id="hasSpindleAtSpeed" />
+              <span class="cf-check-mark"></span>
+              <span class="cf-check-text">Variable Speed Spindle (At-Speed)</span>
+            </label>
+            <label class="cf-check-row">
+              <input type="checkbox" onchange="selectToolhead('dust')" id="hasDust" />
+              <span class="cf-check-mark"></span>
+              <span class="cf-check-text">Dust Shoe with Extractor</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="cf-settings-section">
+          <h6>Advanced Settings</h6>
+          <p class="cf-settings-desc">Customise G-Code commands and other advanced options</p>
+
+          <button class="cf-btn" id="collapse_toggle_2" type="button" onclick="$('#advanced-settings').toggleClass('cf-hidden');$('#collapse_toggle_2').text($('#advanced-settings').hasClass('cf-hidden')?'Show Advanced Settings':'Hide Advanced Settings')">Show Advanced Settings</button>
+
+          <div id="advanced-settings" class="cf-hidden" style="margin-top:8px">
+
+            <div class="cf-adv-row">
+              <label class="cf-adv-label">Spindle / Laser / Plasma Command</label>
+              <input type="text" class="cf-input" id="scommand" value="S">
+            </div>
+
+            <div class="cf-adv-row">
+              <label class="cf-adv-label">Power/Speed Scale</label>
+              <input type="number" class="cf-input" id="scommandscale" value="1000" step="any">
+            </div>
+
+            <div class="cf-adv-row">
+              <label class="cf-adv-label">Power/Speed on new-line</label>
+              <label class="cf-check-row">
+                <input type="checkbox" id="scommandnewline" value="option1">
+                <span class="cf-check-mark"></span>
+                <span class="cf-check-text">Enable</span>
+              </label>
+            </div>
+
+            <div class="cf-adv-row">
+              <label class="cf-adv-label">Rapid Move Command</label>
+              <input type="text" class="cf-input" id="g0command" value="G0">
+            </div>
+
+            <div class="cf-adv-row">
+              <label class="cf-adv-label">Linear Move Command</label>
+              <input type="text" class="cf-input" id="g1command" value="G1">
+            </div>
+
+            <div class="cf-adv-row">
+              <label class="cf-adv-label">Start G-Code</label>
+              <textarea class="cf-textarea" id="startgcode" placeholder="For example M4 G28 G90 M80 - supports multi line commands"></textarea>
+            </div>
+
+            <div class="cf-adv-row">
+              <label class="cf-adv-label">End G-Code</label>
+              <textarea class="cf-textarea" id="endgcode" placeholder="For example M5 M81 G28 - supports multi line commands"></textarea>
+            </div>
+
+            <div class="cf-adv-row">
+              <label class="cf-adv-label">Plasma: Touch Off Sequence</label>
+              <textarea class="cf-textarea" id="ihsgcode" placeholder="G0 + clearanceHeight + \nG38.2 Z-30 F100\nG10 L20 P1 Z0"></textarea>
+            </div>
+
+            <div class="cf-adv-row">
+              <label class="cf-adv-label">Performance: Disable Tool-Width Preview</label>
               <div>
-                <div class="row">
-                  <div class="cell-sm-4">
-                    <label class="mt-1">Width (X-Axis)</label>
-                    <input type="number" data-role="input" data-clear-button="false" class="form-control" id="sizexmax" value="200" data-append="mm" step="any">
-                  </div>
-                  <div class="cell-sm-4">
-                    <label class="mt-1">Depth (Y-Axis)</label>
-                    <input type="number" data-role="input" data-clear-button="false" class="form-control" id="sizeymax" value="200" data-append="mm" step="any">
-                  </div>
-                  <div class="cell-sm-4">
-                    <label class="mt-1">Height (Z-Axis)</label>
-                    <input type="number" data-role="input" data-clear-button="false" class="form-control" id="sizezmax" value="100" data-append="mm" step="any">
-                  </div>
-                </div>
-                <input type="hidden" id="machinetype" value="custom">
+                <label class="cf-check-row">
+                  <input type="checkbox" id="performanceLimit" value="option1">
+                  <span class="cf-check-mark"></span>
+                  <span class="cf-check-text">Disable preview</span>
+                </label>
+                <p class="cf-settings-desc" style="margin-top:4px">
+                  This can speed up toolpath calculations, but will
+                  disable the toolpath-width preview: You'll only see
+                  the centerline of the toolpath, not the width of the
+                  cut. Helps slow PCs work better.
+                </p>
               </div>
-            </li>
+            </div>
 
-            <li>
-              <h6>Add-Ons Installed<br><small>Telling us what kind of attachments the machine has, allows us to setup the G-Code to control these devices correctly from within the job</small></h6>
+          </div>
+        </div>
 
-              <ul class="image-checkbox-ul">
-                <li>
-                  <input type="checkbox" onchange="selectToolhead('router')" id="hasRouter"  />
-                  <label for="hasRouter"><img src="./images/router11.png" /></label>
-                  <div class="image-checkbox-text">RoutER11 with IoT Relay</div>
-                </li>
-                <li>
-                  <input type="checkbox" onchange="selectToolhead('plasma')" id="hasPlasma" />
-                  <label for="hasPlasma"><img src="./images/leadplasma.png" /></label>
-                  <div class="image-checkbox-text">LEAD 1010 Plasma Add-On</div>
-                </li>
-                <li>
-                  <input type="checkbox" onchange="selectToolhead('laser')" id="hasLaser" />
-                  <label for="hasLaser"><img src="./images/laser.png" /></label>
-                  <div class="image-checkbox-text">Laser Diode Module</div>
-                </li>
-                <li>
-                  <input type="checkbox" onchange="selectToolhead('penPlotter')" id="hasPenPlotter" />
-                  <label for="hasPenPlotter"><img src="./images/plotter.png" /></label>
-                  <div class="image-checkbox-text">SCRIBE<br>Pen Lifter</div>
-                </li>
-                <li>
-                  <input type="checkbox" onchange="selectToolhead('spindle')" id="hasSpindle" />
-                  <label for="hasSpindle"><img src="./images/vfd.png" /></label>
-                  <div class="image-checkbox-text">Variable Speed Spindle</div>
-                </li>
-                <li>
-                  <input type="checkbox" onchange="selectToolhead('spindleAtSpeed')" id="hasSpindleAtSpeed" />
-                  <label for="hasSpindleAtSpeed"><img src="./images/vfd.png" /></label>
-                  <div class="image-checkbox-text">Variable Speed Spindle<br>(At-Speed)</div>
-                </li>
-                <li>
-                  <input type="checkbox" onchange="selectToolhead('dust')" id="hasDust" />
-                  <label for="hasDust"><img src="./images/dustshoe.png" /></label>
-                  <div class="image-checkbox-text">Dust Shoe with Extractor</div>
-                </li>
-              </ul>
-
-            </li>
-
-            <li>
-              <h6>Advanced Settings<br><small>If you have any custom requirements, please customise the settings in the Advanced Settings section</small></h6>
-
-              <button class="button" id="collapse_toggle_2">Show Advanced Settings</button>
-              <div class="pos-relative">
-                  <div data-role="collapse"
-                       data-toggle-element="#collapse_toggle_2" data-collapsed="true">
-
-
-                       <div>
-
-
-
-                         <div class="row mb-2">
-                             <label class="cell-sm-6">Spindle / Laser / Plasma Command</label>
-                             <div class="cell-sm-6">
-                                 <input type="text" data-role="input" data-clear-button="false" class="form-control form-control-sm" id="scommand" value="S" >
-                             </div>
-                         </div>
-
-                         <div class="row mb-2">
-                             <label class="cell-sm-6">Power/Speed Scale</label>
-                             <div class="cell-sm-6">
-                               <input type="number" data-role="input" data-clear-button="false" class="form-control form-control-sm" id="scommandscale" value="1000" data-prepend="0 to" step="any">
-                             </div>
-                         </div>
-
-                         <div class="row mb-2">
-                             <label class="cell-sm-6">Power/Speed on new-line</label>
-                             <div class="cell-sm-6">
-                                   <input data-role="checkbox" type="checkbox" id="scommandnewline" value="option1">
-                             </div>
-                         </div>
-
-                         <div class="row mb-2">
-                             <label class="cell-sm-6">Rapid Move Command</label>
-                             <div class="cell-sm-6">
-                                 <input type="text" data-role="input" data-clear-button="false" class="form-control form-control-sm" id="g0command" value="G0" >
-                             </div>
-                         </div>
-
-                         <div class="row mb-2">
-                             <label class="cell-sm-6">Linear Move Command</label>
-                             <div class="cell-sm-6">
-                                 <input type="text" data-role="input" data-clear-button="false" class="form-control form-control-sm" id="g1command" value="G1" >
-                             </div>
-                         </div>
-
-                         <div class="row mb-2">
-                             <label class="cell-sm-6">Start G-Code</label>
-                             <div class="cell-sm-6">
-                               <textarea id="startgcode" data-role="textarea" data-auto-size="true" data-clear-button="false" placeholder="For example M4 G28 G90 M80 - supports multi line commands"></textarea>
-                             </div>
-                         </div>
-
-                         <div class="row mb-2">
-                             <label class="cell-sm-6">End G-Code</label>
-                             <div class="cell-sm-6">
-                               <textarea id="endgcode" data-role="textarea" data-auto-size="true" data-clear-button="false" placeholder="For example M5 M81 G28 - supports multi line commands"></textarea>
-                             </div>
-                         </div>
-
-                         <div class="row mb-2">
-                             <label class="cell-sm-6">Plasma: Touch Off Sequence</label>
-                             <div class="cell-sm-6">
-                               <textarea id="ihsgcode" data-role="textarea" contenteditable="true" data-auto-size="true" data-clear-button="false" placeholder="G0 + clearanceHeight + \nG38.2 Z-30 F100\nG10 L20 P1 Z0"></textarea>
-                             </div>
-                         </div>
-
-                         <div class="row mb-0">
-                             <label class="cell-sm-6">Performance: Disable Tool-Width Preview<br>
-                             <span class="text-small">
-                               This can speed up toolpath calculations, but will
-                               disable the toolpath-width preview: You'll only see
-                               the centerline of the toolpath, not the width of the
-                               cut.  Helps slow PCs work better
-                             </span>
-                             </label>
-                             <div class="cell-sm-6">
-                                 <input data-role="checkbox" type="checkbox" id="performanceLimit" value="option1">
-                             </div>
-                         </div>
-
-                       </div>
-
-
-                  </div>
-              </div>
-
-
-            </li>
-          </ul>
         </form>
     </div>
     <div class="cf-modal-footer">
-
-      <button class="cf-btn" onclick="cfModalClose('settingsmodal')">Cancel</button>
+      <button class="cf-btn" onclick="cfModalClose('settingsmodal')" type="button">Cancel</button>
       <button id="savesettings" type="button" class="cf-btn cf-btn-green">Save</button>
     </div>
   </div>

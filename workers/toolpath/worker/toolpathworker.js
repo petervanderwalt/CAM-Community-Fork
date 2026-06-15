@@ -180,6 +180,13 @@ if (typeof window == "undefined") { // Only run as worker
       config.offset = (toolpath.userData.camSpotSize / 2)
       config.angle = toolpath.userData.camFillAngle || 0;
       toolpath.userData.inflated = fillPath(config);
+    } else if (operation == "Laser: Textures") {
+      console.log("Laser: Textures");
+      config.zstart = 0;
+      config.zstep = 0.1;
+      config.zdepth = 0.1;
+      config.offset = 0;
+      toolpath.userData.inflated = workerTexturePath(config);
     }
     // console.log("Finished " + q+ " of " +toolpaths.length)
     var data = {
@@ -189,7 +196,7 @@ if (typeof window == "undefined") { // Only run as worker
     }
     self.postMessage(data);
 
-    console.log(toolpath.userData.inflated.children.length)
+    if (toolpath.userData.inflated) console.log(toolpath.userData.inflated.children.length)
 
     // console.log('Finished all the toolpaths')
     return toolpath

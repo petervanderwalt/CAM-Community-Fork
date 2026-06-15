@@ -4,23 +4,24 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="viewport" content="width=1200, maximum-scale=5, user-scalable=yes" />
 		<title>CAM Community Fork</title>
 		<meta name="description" content="" />
 		<meta name="keywords" content="" />
 		<meta name="author" content="" />
 		<meta name="version" content="" />
-		<meta name="metro4:init" content="true">
-		<link href="https://fonts.googleapis.com/css?family=Bowlby+One+SC" rel="stylesheet">
+		<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23333'/%3E%3Cpath d='M8 8L24 24M24 8L8 24' stroke='%23fff' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css?family=Bowlby+One+SC" rel="stylesheet">
 		<link type="text/css" rel="stylesheet" media="all" href="css/main.css" />
 		<link type="text/css" rel="stylesheet" media="all" href="css/community-fork.css" />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 		<link type="text/css" rel="stylesheet" media="all" href="css/grpblock.css" />
 		<link type="text/css" rel="stylesheet" media="all" href="lib/jquery/jquery-ui.css" />
-		<link rel="stylesheet" href="lib/metro4/css/metro-all.css" />
-		<!-- <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css"> -->
+
 		<link type="text/css" rel="stylesheet" media="all" href="css/sidebarmenu.css" />
 		<link type="text/css" rel="stylesheet" media="all" href="css/iconlib.css" />
-		<link type="text/css" rel="stylesheet" media="all" href="css/image-checkbox.css" />
 		<link type="text/css" rel="stylesheet" media="all" href="css/splash.css" />
 
 		<link rel="manifest" href="/manifest.json">
@@ -105,172 +106,56 @@
 			</span>
 			<div id="main-viewer" class="h-100" style="overflow:hidden;">
 					<div class="window drop-shadow" style="height: calc(100% - 10px); overflow: hidden;">
-						<div class="window-caption bg-gray" style="height: 28px; padding: 0 10px; line-height: 28px; display:flex;align-items:center;gap:10px;">
-							<span style="font-family: 'Open Sans', Helvetica, Arial, sans-serif; font-size: 13px; color: #fff;white-space:nowrap;">CAM Community Fork</span>
+						<div class="window-content" style="overflow:hidden; ">
+							<div class="cf-main-toolbar">
+								<!-- File -->
+								<span class="btn-file">
+									<button class="cf-btn cf-tb-btn" title="Open drawing"><span class="far fa-folder-open"></span><span class="cf-tb-label">Open</span></button>
+									<input id="file" type="file" accept=".svg,.dxf,.gif,.jpg,.jpeg,.tiff,.png,.bmp,.gbl,.gtl,.gbr,.dri,.txt" multiple />
+								</span>
+								<button class="cf-btn cf-tb-btn" onclick="storeUndo(true); objectsInScene.length = 0; toolpathsInScene.length = 0; trashGcode(); fillTree(); $('.workspaceTitle').html('');" title="New project"><span class="far fa-file"></span><span class="cf-tb-label">New</span></button>
+								<div class="cf-tb-split">
+									<button class="cf-btn cf-tb-btn" onclick="exportWorkspace()" title="Save project"><span class="fas fa-download"></span><span class="cf-tb-label">Save</span></button>
+									<button class="cf-btn cf-tb-split-toggle" data-dropdown="tbSaveMenu">&#9662;</button>
+									<ul class="cf-dropdown" id="tbSaveMenu">
+										<li onclick="exportWorkspace()"><a href="#">Save Project (.OBC)</a></li>
+										<li class="btn-file"><a href="#">Open Project (.JSON, .OBC)</a><input type="file" id="workspaceImport" accept=".json,.obc" multiple /></li>
+									</ul>
+								</div>
 
-						</div>
-						<div class="window-content pt-2" style="overflow:hidden; ">
-							<nav data-role="ribbonmenu">
-								<ul class="tabs-holder">
-									<li><a href="#section-workspace"><i class="fas fa-object-group"></i> Project</a></li>
-									<li><a href="#section-settings"><i class="fa fa-fw fa-cogs"></i> Settings</a></li>
-								</ul>
-								<div class="content-holder">
-									<div class="section" id="section-workspace">
+								<span class="cf-tb-sep"></span>
 
-										<div class="group">
+								<!-- Zoom -->
+								<button class="cf-btn cf-tb-btn" onclick="resetView();" title="Zoom to job"><span class="fa fa-eye"></span><span class="cf-tb-label">Job</span></button>
+								<button class="cf-btn cf-tb-btn" onclick="resetView(scene.getObjectByName('Grid'));" title="Zoom to grid"><span class="fa fa-th"></span><span class="cf-tb-label">Grid</span></button>
+								<button class="cf-btn cf-tb-btn" onclick="resetView(object);" title="Zoom to object"><span class="fa fa-cube"></span><span class="cf-tb-label">Obj</span></button>
 
-											<div class="ribbon-button btn-file" title="Open a drawing">
-												<span class="icon">
-													<span class="far fa-folder-open fg-amber"></span>
-												</span>
-												<input id="file" type="file" accept=".svg,.dxf,.gif,.jpg,.jpeg,.tiff,.png,.bmp,.gbl,.gtl,.gbr,.dri,.txt" multiple />
-												<span class="caption">Open<br>Drawing</span>
-											</div>
+								<span class="cf-tb-sep"></span>
 
+								<!-- Simulate -->
+								<button class="cf-btn cf-tb-btn" onclick="simSpeed();" title="Simulation speed"><span class="fas fa-tachometer-alt"></span><span class="cf-tb-label"><span id="simspeedval">1</span>x</span></button>
+								<button class="cf-btn cf-tb-btn" id="runSimBtn" onclick="sim(0)" disabled title="Run simulation"><span class="fas fa-fighter-jet"></span><span class="cf-tb-label">Sim</span></button>
+								<button class="cf-btn cf-tb-btn" id="stopSimBtn" onclick="simstop()" style="display:none" title="Stop simulation"><span class="fas fa-stop"></span><span class="cf-tb-label">Stop</span></button>
 
-											<span class="title">File</span>
-										</div>
+								<span class="cf-tb-sep"></span>
 
-										<div class="group">
-											<div class="ribbon-group">
-												<button class="ribbon-icon-button" onclick="storeUndo(true); objectsInScene.length = 0; toolpathsInScene.length = 0; trashGcode(); fillTree(); $('.workspaceTitle').html('');">
-													<span class="icon">
-														<span class="far fa-file"></span>
-													</span>
-													<span class="caption">New (Empty) Project</span>
-												</button>
-												<div>
-													<button class="ribbon-icon-button dropdown-toggle">
-														<span class="icon">
-															<span class="fas fa-download"></span>
-														</span>
-														<span class="caption">Save/Open Project</span>
-													</button>
-													<ul class="ribbon-dropdown" data-role="dropdown" data-duration="100">
-														<li onclick="exportWorkspace()"><a href="#">Save Project (Export .OBC file)</a></li>
-														<li class="btn-file"><a href="#">Open Project (.JSON, .OBC)</a><input type="file" id="workspaceImport" accept=".json,.obc" multiple style="height: 26px;" /></li>
-													</ul>
-												</div>
+								<!-- Undo/Redo -->
+								<button class="cf-btn cf-tb-btn" onclick="undo()" title="Undo"><span class="fas fa-undo"></span><span class="cf-tb-label">Undo</span></button>
+								<button class="cf-btn cf-tb-btn" onclick="redo()" title="Redo"><span class="fas fa-redo"></span><span class="cf-tb-label">Redo</span></button>
 
-											</div>
-											<span class="title">Project</span>
-										</div>
+								<span class="cf-tb-sep"></span>
 
-
-
-										<div class="group">
-											<div class="ribbon-group">
-												<button class="ribbon-icon-button" onclick="resetView();">
-													<span class="icon">
-														<span class="fa fa-eye"></span>
-													</span>
-													<span class="caption">Job</span>
-												</button>
-												<br>
-												<button class="ribbon-icon-button" onclick="resetView(scene.getObjectByName('Grid'));">
-													<span class="icon">
-														<span class="fa fa-th"></span>
-													</span>
-													<span class="caption">Grid</span>
-												</button>
-												<br>
-												<button class="ribbon-icon-button" onclick="resetView(object);">
-													<span class="icon">
-														<span class="fa fa-cube"></span>
-													</span>
-													<span class="caption">Object</span>
-												</button>
-											</div>
-											<span class="title">Zoom</span>
-										</div>
-										<div class="group">
-											<div class="ribbon-group">
-												<button class="ribbon-icon-button" onclick="simSpeed();">
-													<span class="icon">
-														<span class="fas fa-tachometer-alt"></span>
-													</span>
-													<span class="caption"><span id="simspeedval">1</span>x</span>
-												</button>
-												<br>
-												<button id="runSimBtn" class="ribbon-icon-button" onclick="sim(0)" disabled>
-													<span class="icon">
-														<span class="fas fa-fighter-jet"></span>
-													</span>
-													<span class="caption">Simulate</span>
-												</button>
-												<br>
-												<button id="stopSimBtn" class="ribbon-icon-button" onclick="simstop()" style="display:none;">
-													<span class="icon">
-														<span class="fas fa-stop"></span>
-													</span>
-													<span class="caption">Stop</span>
-												</button>
-											</div>
-											<span class="title">Simulate</span>
-										</div>
-										<div class="group">
-											<div class="ribbon-group">
-												<button class="ribbon-icon-button" onclick="undo()">
-													<span class="icon">
-														<span class="fas fa-undo"></span>
-													</span>
-													<span class="caption">Undo</span>
-												</button>
-												<br>
-												<button class="ribbon-icon-button" onclick="redo()">
-													<span class="icon">
-														<span class="fas fa-redo"></span>
-													</span>
-													<span class="caption">Redo</span>
-												</button>
-											</div>
-											<span class="title">Undo/Redo</span>
-										</div>
-
-									</div>
-									<div class="section" id="section-settings">
-										<div class="group">
-											<button class="ribbon-button" onclick="Metro.dialog.open('#settingsmodal');">
-												<span class="icon">
-													<span class="fa fa-fw fa-cogs"></span>
-												</span>
-												<span class="caption">Settings</span>
-											</button>
-
-											<div class="ribbon-group">
-												<button class="ribbon-icon-button" onclick="backupSettingsLocal()" title="Take a backup">
-													<span class="icon">
-														<span class="fa fa-download fa-fw"></span>
-													</span>
-													<span class="caption">Backup Settings</span>
-												</button>
-												<br>
-
-												<button class="ribbon-icon-button btn-file" title="Open a backup settings file">
-													<span class="icon">
-														<span class="fa fa-upload fa-fw"></span>
-													</span>
-													<span class="caption">Restore from file</span>
-													<input id="jsonFile" type="file" accept=".json" />
-												</button>
-												<br>
-
-												<button class="ribbon-icon-button btn-file" onclick="ConfirmDelete()" title="Reset all settings to default">
-													<span class="icon">
-														<span class="fa fa-exclamation-triangle fa-fw"></span>
-													</span>
-													<span class="caption">Factory Reset</span>
-												</button>
-												<br>
-											</div>
-											<span class="title">Settings</span>
-										</div>
-
-
-
-									</div>
-							</nav>
+								<!-- Settings with dropdown -->
+								<div class="cf-tb-split">
+									<button class="cf-btn cf-tb-btn" onclick="cfModalOpen('settingsmodal')" title="Settings"><span class="fa fa-cogs"></span><span class="cf-tb-label">Settings</span></button>
+									<button class="cf-btn cf-tb-split-toggle" data-dropdown="tbSettingsMenu">&#9662;</button>
+									<ul class="cf-dropdown" id="tbSettingsMenu">
+										<li onclick="backupSettingsLocal()"><a href="#">Backup Settings</a></li>
+										<li class="btn-file"><a href="#">Restore from file</a><input type="file" id="jsonFile" accept=".json" /></li>
+										<li onclick="ConfirmDelete()"><a href="#">Factory Reset</a></li>
+									</ul>
+								</div>
+							</div>
 							<div id="renderArea">
 
 
@@ -283,18 +168,21 @@
 								<div class="sidemenu">
 									<div class="tbtn tbtnactive mouseSelectBtn" onclick="mouseSelectMode();" title="Mouse Select Mode">
 										<i class="fa fas fa-mouse-pointer" aria-hidden="true"></i>
+										<span class="tb-label">Select</span>
 									</div>
 
 									<div class="tbtn mouseMoveBtn" onclick="mouseMoveMode();" title="Mouse Move Mode">
 										<i class="fas fa-arrows-alt " aria-hidden="true"></i>
+										<span class="tb-label">Move</span>
 									</div>
 
 									<div class="tbtn mouseDelBtn" onclick="mouseEraseMode();" title="Mouse Erase Mode">
 										<i class="fas fa-eraser " aria-hidden="true"></i>
+										<span class="tb-label">Delete</span>
 									</div>
-									<!-- <hr class="bg-grayBlue"> -->
 									<div class="tbtn mouseScaleBtn" onclick="mouseScaleMode();" title="Mouse Scale/Move/Rotate Mode">
 										<i class="fas fa-ruler" aria-hidden="true"></i>
+										<span class="tb-label">Transform</span>
 									</div>
 
 								</div>
@@ -304,18 +192,16 @@
 								<!--  -->
 							</div>
 
-							<div id="scalewindow" style="visibility: hidden;" data-role="draggable" data-drag-element=".drag-element">
-								<div class="window">
-									<div class="window-caption drag-element bg-gray">
-										<span class="icon fas fa-ruler"></span>
-										<span class="title">Transform</span>
-										<div class="buttons">
-											<span class="btn-close" onclick="scalewindow.style.visibility = 'hidden';"></span>
-										</div>
+							<div id="scalewindow" style="visibility: hidden;">
+								<div class="cf-modal-overlay" id="scalewindow-overlay">
+								<div class="cf-modal" id="scalewindow-content" style="max-width:480px">
+									<div class="cf-modal-title drag-element">
+										<span class="fas fa-ruler"></span> Transform
+										<span class="cf-modal-close" onclick="scalewindow.style.visibility = 'hidden'">&times;</span>
 									</div>
-									<div class="window-content p-2" id="scalewindowcontent">
-										<!--  -->
+									<div class="cf-modal-content" id="scalewindowcontent">
 									</div>
+								</div>
 								</div>
 							</div>
 
@@ -465,9 +351,7 @@
 	</body>
 
 	<script>
-		METRO_HOTKEYS_FILTER_CONTENT_EDITABLE = false;
-		METRO_HOTKEYS_FILTER_INPUT_ACCEPTING_ELEMENTS = true;
-		METRO_HOTKEYS_FILTER_TEXT_INPUTS = true;
+
 	</script>
 
 	<script type="text/javascript" src="lib/fontawesome5/js/all.js"></script>
@@ -481,9 +365,7 @@
 	<!-- <link type="text/css" rel="stylesheet" media="all" href="lib/bootoast/src/bootoast.css" />
 <script type="text/javascript" src="lib/bootoast/src/bootoast.js"></script> -->
 
-	<!-- METRO -->
-	<script type="text/javascript" src="lib/metro4/js/metro.min.js"></script>
-	<!-- <script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script> -->
+	<!-- METRO (removed) -->
 
 	<!-- Helpers -->
 	<script type="text/javascript" src="js/helpers.js"></script>

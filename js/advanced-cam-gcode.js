@@ -8,10 +8,10 @@ function trashGcode() {
   disableSim()
   $('#sendGcodeToMyMachine').prop('disabled', true);;
   $('#gcodesavebtn2').addClass('disabled');
-  $('#gcodesavebtn2').removeClass('primary');
+  $('#gcodesavebtn2').removeClass('cf-btn-primary');
   $('#gcodetrashbtn2').addClass('disabled');
-  $('#gcodepreviewicon').removeClass('fg-grayBlue').addClass('fg-gray');
-  $('#trashicon').removeClass('fg-red').addClass('fg-gray');
+  $('#gcodepreviewicon').addClass('cf-text-muted');
+  $('#trashicon').addClass('cf-text-muted').removeClass('cf-text-danger');
 }
 
 function makeGcode() {
@@ -35,10 +35,10 @@ function makeGcodeExec() {
     // Button on Ribbon Menu
     $("#generatetpgcode").html("<i class='fa fa-spinner fa-spin '></i> Generating, please wait");
     $("#generatetpgcode").prop('disabled', true);
-    $("#generatetpgcode").removeClass('success');
+    $("#generatetpgcode").removeClass('cf-btn-green');
 
     $('#gcodesavebtn2').addClass('disabled');
-    $('#gcodesavebtn2').removeClass('primary');
+    $('#gcodesavebtn2').removeClass('cf-btn-primary');
 
     // Button on Window bar above Toolpaths
 
@@ -129,7 +129,7 @@ function makeGcodeExec() {
 
   } else {
     var message = `Toolpath Error: No Toolpaths added yet.  You need to select some entities, add them to a new toolpath, and configure the toolpath, before generating G-Code`
-    Metro.toast.create(message, null, 4000, 'bg-red');
+    cfToast(message, 4000, 'red');
   }
 }
 
@@ -181,12 +181,12 @@ function generateGcode(index, toolpathGrp, cutSpeed, plungeSpeed, spindleRpm, la
 
   if (!toolpathGrp) {
     var message = `Toolpath Error: One or more of your toolpaths is not configured.  You need to configure the toolpaths (toolpath-` + index + `), before generating G-Code`
-    Metro.toast.create(message, null, 4000, 'bg-red');
+    cfToast(message, 4000, 'red');
     $("#generatetpgcode").html("<i class='fa fa-cubes' aria-hidden='true'></i> Generate G-Code");
     $("#generatetpgcode").prop('disabled', false);
-    $("#generatetpgcode").addClass('success');
+    $("#generatetpgcode").addClass('cf-btn-green');
     $('#gcodesavebtn2').removeClass('disabled');
-    $('#gcodesavebtn2').addClass('primary');
+    $('#gcodesavebtn2').addClass('cf-btn-primary');
   } else {
     console.log(toolpathGrp)
 

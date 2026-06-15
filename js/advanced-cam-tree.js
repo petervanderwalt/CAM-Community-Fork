@@ -35,7 +35,7 @@ function fillTree() {
   if (toolpathsInScene.length > 0) {
 
     $('#generatetpgcode').prop('disabled', false);
-    $('#generatetpgcode').addClass('success');
+    $('#generatetpgcode').addClass('cf-btn-green');
 
     var table = `<table class="jobsetuptable" style="width: 100%" id="toolpathstable">`
     $('#toolpathtree').append(table)
@@ -80,8 +80,6 @@ function fillTree() {
         } else {
           toolp += `<button class="cf-btn cf-btn-green cf-btn-icon cf-disabled" title="Move down" disabled><i class="fa fa-arrow-down fa-fw"></i></button>`
         }
-
-        toolp += `<span style="flex:1;min-width:4px;"></span>`
 
         toolp += `<button class="cf-btn cf-btn-gray cf-btn-icon" title="Reselect toolpaths" onclick="setSelectionFromToolPath(` + i + `)"><i class="far fa-object-group fa-fw"></i></button>`
 
@@ -129,7 +127,7 @@ function fillTree() {
     var instructions = `<p class="cf-text-muted cf-text-center cf-mt-2">Select vectors in the viewer or Documents tree (Ctrl+click for multiples, Ctrl+A for All).<br>Then use the <b>Add Toolpath</b> button above.</p>`
     $('#toolpathtree').append(instructions);
     $('#generatetpgcode').prop('disabled', true);
-    $("#generatetpgcode").removeClass('success');
+    $("#generatetpgcode").removeClass('cf-btn-green');
 
   } // End of if (toolpathsInScene.length > 0)
 

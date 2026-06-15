@@ -65,6 +65,9 @@ function typeofOperation(newval, objectseq) {
   } else if (newval == "Pen Plotter: (lines fill)") {
     penRasterMode(objectseq);
     updateCamUserData(objectseq);
+  } else if (newval == "Laser: Textures") {
+    laserTextureMode(objectseq);
+    updateCamUserData(objectseq);
   }
 
 
@@ -246,21 +249,29 @@ function setupJob(i) {
   // $('#statusBody').html('' );
   var template2 = `
     <div id="toolpathWarnings"></div>
-    <table class="table striped compact">
+    <table>
       <tr>
-        <td style="width:120px">Name:</td>
-        <td><input autofocus type="text" class="cam-form-field" value="` + toolpathsInScene[i].name + `" id="tOpName` + i + `" objectseq="` + i + `"></td>
+        <td>Name:</td>
+        <td>
+          <div class="input-addon">
+            <span class="input-addon-label-left"><span class="fas fa-tag"></span></span>
+            <input autofocus type="text" class="cam-form-field" value="` + toolpathsInScene[i].name + `" id="tOpName` + i + `" objectseq="` + i + `">
+          </div>
+        </td>
       </tr>
       <tr>
         <td>Operation:</td>
         <td>
-          <select class="cam-form-field camOperationSelect" id="toperation` + i + `" objectseq="` + i + `" style="width:100%;">
+          <div class="input-addon">
+            <span class="input-addon-label-left"><span class="fas fa-cog"></span></span>
+            <select class="cam-form-field camOperationSelect" id="toperation` + i + `" objectseq="` + i + `" style="width:100%;">
               <option>... Select Operation ...</option>
               <optgroup label="Laser" class="camOptgroup">
                 <option class="camOption">Laser: Vector (no path offset)</option>
                 <option class="camOption">Laser: Vector (path inside)</option>
                 <option class="camOption">Laser: Vector (path outside)</option>
                 <option class="camOption">Laser: Vector (raster fill) (Beta)</option>
+                <option class="camOption">Laser: Textures</option>
               </optgroup>
               <optgroup label="Milling / Routing" class="camOptgroup">
                 <option class="camOption">CNC: Vector (no offset)</option>
@@ -287,14 +298,14 @@ function setupJob(i) {
                 <option class="camOption">Pen Plotter: (lines fill)</option>
               </optgroup>
             </select>
+          </div>
         </td>
       </tr>
-    </table>
-    <table class="table striped compact inputtexture">
-      <tr>
-        <td style="width:120px">Texture Type</td>
+      <tr class="inputtexture">
+        <td>Texture Type</td>
         <td>
           <div class="input-addon">
+            <span class="input-addon-label-left"><span class="fas fa-shapes"></span></span>
             <select class="cam-form-field" id="ttexturetype` + i + `" objectseq="` + i + `" style="width:100%;">
               <option>Linear Sweep</option>
               <option>Crosshatch</option>
@@ -307,37 +318,38 @@ function setupJob(i) {
           </div>
         </td>
       </tr>
-      <tr>
+      <tr class="inputtexture">
         <td>Spacing / Resolution</td>
         <td>
           <div class="input-addon">
+            <span class="input-addon-label-left"><span class="fas fa-arrows-alt-h"></span></span>
             <input type="number" class="cam-form-field" value="2" id="ttexturespacing` + i + `" objectseq="` + i + `" min="0.1" step="any">
             <span class="input-addon-label-right">mm</span>
           </div>
         </td>
       </tr>
-      <tr>
+      <tr class="inputtexture">
         <td>Amplitude / Z Variation</td>
         <td>
           <div class="input-addon">
+            <span class="input-addon-label-left"><span class="fas fa-arrows-alt-v"></span></span>
             <input type="number" class="cam-form-field" value="0.5" id="ttextureamplitude` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm</span>
           </div>
         </td>
       </tr>
-      <tr>
+      <tr class="inputtexture">
         <td>Pattern Angle</td>
         <td>
           <div class="input-addon">
+            <span class="input-addon-label-left"><span class="fas fa-undo"></span></span>
             <input type="number" class="cam-form-field" value="0" id="ttextureangle` + i + `" objectseq="` + i + `" min="0" max="180" step="any">
             <span class="input-addon-label-right">deg</span>
           </div>
         </td>
       </tr>
-    </table>
-    <table class="table striped compact">
       <tr class="inputcnc inputpocket inputtooldia inputdrill inputplotter">
-        <td style="width:120px">Endmill / Pen Diameter</td>
+        <td>Endmill / Pen Diameter</td>
         <td>
           <div class="input-addon">
             <span class="input-addon-label-left"><img class="fa-fw" src="images/endmilldia.svg" width="16px" height="16px"></span>
@@ -544,6 +556,7 @@ function setupJob(i) {
         <td>Pen Up S-Value</td>
         <td>
           <div class="input-addon">
+            <span class="input-addon-label-left"><span class="fas fa-arrow-up"></span></span>
             <input type="number" class="cam-form-field" value="255" id="tpenup` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">M3S</span>
           </div>
@@ -553,6 +566,7 @@ function setupJob(i) {
         <td>Pen Down S-Value</td>
         <td>
           <div class="input-addon">
+            <span class="input-addon-label-left"><span class="fas fa-arrow-down"></span></span>
             <input type="number" class="cam-form-field" value="0" id="tpendown` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">M3S</span>
           </div>
@@ -572,6 +586,7 @@ function setupJob(i) {
         <td>Pen Up Z</td>
         <td>
           <div class="input-addon">
+            <span class="input-addon-label-left"><span class="fas fa-arrow-up"></span></span>
             <input type="number" class="cam-form-field" value="5" id="tpenupz` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm</span>
           </div>
@@ -581,48 +596,56 @@ function setupJob(i) {
         <td>Pen Down Z</td>
         <td>
           <div class="input-addon">
+            <span class="input-addon-label-left"><span class="fas fa-arrow-down"></span></span>
             <input type="number" class="cam-form-field" value="0" id="tpendownz` + i + `" objectseq="` + i + `" min="0" step="any">
             <span class="input-addon-label-right">mm</span>
           </div>
         </td>
       </tr>
-    </table>
-
-    <table class="table striped compact">
       <tr class="inputcnc inputpocket inputplasma inputdragknife inputlaser inputlasernooffset">
-        <td style="width:120px">Cutting Direction</td>
+        <td>Cutting Direction</td>
         <td>
-          <select class="cam-form-field" id="tdirection` + i + `" objectseq="` + i + `" style="width:100%;">
-            <option selected>Climb</option>
-            <option>Conventional</option>
-          </select>
+          <div class="input-addon">
+            <span class="input-addon-label-left"><span class="fas fa-arrow-right"></span></span>
+            <select class="cam-form-field" id="tdirection` + i + `" objectseq="` + i + `" style="width:100%;">
+              <option selected>Climb</option>
+              <option>Conventional</option>
+            </select>
+          </div>
         </td>
       </tr>
       <tr class="inputplasma inputcnc inputpocket inputdragknife inputlaser inputlasernooffset">
         <td>Geometry Merge</td>
         <td>
-          <select class="cam-form-field" id="tunion` + i + `" objectseq="` + i + `" style="width:100%;">
-            <option selected>No</option>
-            <option>Yes</option>
-          </select>
+          <div class="input-addon">
+            <span class="input-addon-label-left"><span class="fas fa-object-group"></span></span>
+            <select class="cam-form-field" id="tunion` + i + `" objectseq="` + i + `" style="width:100%;">
+              <option selected>No</option>
+              <option>Yes</option>
+            </select>
+          </div>
         </td>
       </tr>
       <tr class="inputcnc inputpocket">
-        <td>Ramp Plunge <span class="fg-red">[beta]</span></td>
+        <td>Ramp Plunge <span class="cf-text-danger">[beta]</span></td>
         <td>
-          <select class="cam-form-field" id="tRampPlunge` + i + `" objectseq="` + i + `" style="width:100%;">
-            <option selected>No</option>
-            <option>Yes</option>
-          </select>
+          <div class="input-addon">
+            <span class="input-addon-label-left"><span class="fas fa-angle-double-down"></span></span>
+            <select class="cam-form-field" id="tRampPlunge` + i + `" objectseq="` + i + `" style="width:100%;">
+              <option selected>No</option>
+              <option>Yes</option>
+            </select>
+          </div>
         </td>
       </tr>
     </table>
 
-    <div class="mt-1">
-      <input type="checkbox" data-role="switch" data-caption="Advanced Settings" id="advanced` + i + `" objectseq="` + i + `">
+    <div style="margin-top:6px">
+      <input type="checkbox" id="advanced` + i + `" objectseq="` + i + `" style="display:none">
+      <button type="button" class="cf-btn" onclick="var a=$('#advanced` + i + `'); var c=$('#collapsediv` + i + `'); c.toggle(); a.prop('checked',c.is(':visible')); $(this).text(c.is(':visible')?'Hide Advanced Settings':'Show Advanced Settings')">Show Advanced Settings</button>
     </div>
-    <div data-role="collapse" data-collapsed="true" data-toggle-element="#advanced` + i + `" id="collapsediv` + i + `">
-      <table class="table striped compact">
+    <div id="collapsediv` + i + `" style="display:none">
+      <table>
         <tr class="inputcnc inputpocket">
           <td style="width:120px">Cut Depth: Start</td>
           <td>
@@ -679,7 +702,6 @@ function setupJob(i) {
   $('#statusFooter').html(`<button type="button" id="previewToolpathBtn" class="cf-btn cf-btn-green" onclick="toolpathPreview(` + i + `); fillTree();">Apply and Preview Toolpath </button><button class="cf-btn" onclick="cfModalClose('statusmodal')">Close</button>`);
   noMode(); // Default to NOOP
   $("#tOpName" + i).focus()
-  Metro.init();
 
   var closedVectors = 0
   var openVectors = 0
@@ -697,8 +719,8 @@ function setupJob(i) {
 
   console.log("This operation contains " + openVectors + " Open Vectors, and " + closedVectors + " Closed Vectors")
   if (openVectors > 0) {
-    var template3 = '<div class="remark"><span class="text-small">This toolpath contains ' + openVectors + ' open vector(s), and ' + closedVectors + ' closed vector(s)</span>'
-    template3 += '<br><span class="text-small fg-red">NB: You cannot use Offset operations on Open Vectors, you can try to use "No Offset" operations, or repair the file first</span>'
+    var template3 = '<div style="padding:8px 10px;background:#fff8e1;border:1px solid #ffd54f;border-radius:3px;margin-bottom:8px"><span style="font-size:12px">This toolpath contains ' + openVectors + ' open vector(s), and ' + closedVectors + ' closed vector(s)</span>'
+    template3 += '<br><span style="font-size:12px" class="cf-text-danger">NB: You cannot use Offset operations on Open Vectors, you can try to use "No Offset" operations, or repair the file first</span>'
     template3 += '</div>'
     $('#toolpathWarnings').html(template3)
   }
@@ -772,15 +794,12 @@ function setupJob(i) {
     $('#statusTitle').html('Configure Toolpath: ' + toolpathsInScene[i].userData.camOperation);
     $('#advanced' + i).prop('checked', toolpathsInScene[i].userData.advanced);
     if (toolpathsInScene[i].userData.advanced) {
-      setTimeout(function() {
-        $('#advanced' + i).prop('checked', true);
-        $('#collapsediv' + i).data("collapse")['expand']()
-      }, 200);
+      $('#advanced' + i).prop('checked', true);
+      $('#collapsediv' + i).show();
+      $('.cf-btn:contains(Show Advanced Settings)').text('Hide Advanced Settings');
     } else {
-      setTimeout(function() {
-        $('#advanced' + i).prop('checked', false);
-        $('#collapsediv' + i).data("collapse")['collapse']()
-      }, 200);
+      $('#advanced' + i).prop('checked', false);
+      $('#collapsediv' + i).hide();
     }
     typeofOperation(toolpathsInScene[i].userData.camOperation, i);
   } else if (lastused) {
@@ -1004,10 +1023,9 @@ function cncPocketMode(i) {
   $('.inputpocketraster').hide();
   $('.inputpocket').show();
   // force open Advanced and force Union by default
-  setTimeout(function() {
-    $('#advanced' + i).prop('checked', true);
-    $('#collapsediv' + i).data("collapse")['expand']()
-  }, 200);
+  $('#advanced' + i).prop('checked', true);
+  $('#collapsediv' + i).show();
+  $('.cf-btn:contains(Show Advanced Settings)').text('Hide Advanced Settings');
   if (!toolpathsInScene[i].userData.camOperation) { // only force if not set already (ie suggested default)
     $('#tunion' + i).val("Yes").prop('selected', true);
   }
@@ -1030,12 +1048,33 @@ function cncPocketRasterMode(i) {
   $('#tunion' + i).closest('tr').hide();
   $('#tRampPlunge' + i).closest('tr').hide();
   $('#tdirection' + i).closest('tr').hide();
-  // force open Advanced
-  setTimeout(function() {
-    $('#advanced' + i).prop('checked', true);
-    $('#collapsediv' + i).data("collapse")['expand']()
-  }, 200);
+  $('#advanced' + i).prop('checked', true);
+  $('#collapsediv' + i).show();
+  $('.cf-btn:contains(Show Advanced Settings)').text('Hide Advanced Settings');
 };
+
+function laserTextureMode(i) {
+  $('.inputcnc').hide();
+  $('.inputpocket').hide();
+  $('.inputpocketraster').hide();
+  $('.inputdragknife').hide();
+  $('.inputplasma').hide();
+  $('.inputdrill').hide();
+  $('.inputdrillpeck').hide();
+  $('.inputlaserraster').hide();
+  $('.inputplotter').hide();
+  $('.inputpenraster').hide();
+  $('.inputlasernooffset').hide();
+  $('.inputtooldia').hide();
+  $('.inputtexture').show();
+  // Show laser-specific fields
+  $('.inputlaser').show();
+  // Hide fields not relevant for laser textures
+  $('#tclearanceHeight' + i).closest('tr').hide();
+  $('#tspotsize' + i).closest('tr').hide();
+  $('#tdirection' + i).closest('tr').hide();
+  $('#tRampPlunge' + i).closest('tr').hide();
+}
 
 function cncTextureMode(i) {
   $('.inputlaser').hide();

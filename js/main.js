@@ -9,6 +9,26 @@ var warncolor = '#ff6600';
 var debug = false;
 var activeObject, fileName, notify;
 
+// ── Toast notification (replaces Metro.toast.create) ──
+function cfToast(message, duration, type) {
+  if (!$('#cf-toast-container').length) {
+    $('body').append('<div id="cf-toast-container"></div>');
+  }
+  var cls = 'cf-toast';
+  if (type) cls += ' cf-toast-' + type;
+  var $toast = $('<div class="' + cls + '"><span class="cf-toast-msg">' + message + '</span><span class="cf-toast-close">&times;</span></div>');
+  $('#cf-toast-container').append($toast);
+  $toast.find('.cf-toast-close').on('click', function() {
+    $toast.remove();
+  });
+  if (duration > 0) {
+    setTimeout(function() {
+      $toast.addClass('cf-toast-fade');
+      setTimeout(function() { $toast.remove(); }, 300);
+    }, duration);
+  }
+}
+
 // ── Modal system (replaces Metro4 dialogs) ──
 function cfModalOpen(id) {
   $('body').addClass('cf-modal-open');
@@ -167,6 +187,20 @@ $(document).ready(function() {
     }
   });
 
+  // Toolbar dropdown toggles (data-dropdown attribute)
+  $(document).on('click', '[data-dropdown]', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var menu = $('#' + $(this).data('dropdown'));
+    $('.cf-dropdown').not(menu).removeClass('open');
+    menu.toggleClass('open');
+  });
+  $(document).on('click', function(e) {
+    if (!$(e.target).closest('[data-dropdown]').length && !$(e.target).closest('.cf-dropdown').length) {
+      $('.cf-dropdown').removeClass('open');
+    }
+  });
+
 }); // End of document.ready
 
 // Error handling
@@ -179,7 +213,7 @@ errorHandlerJS = function() {
     console.log(errmessage + "\n\n(" + url + " line " + line + ")");
     if (errmessage.indexOf('updateMatrixWorld') == -1) { // Ignoring threejs/google api messages, add more || as discovered
       var message = `An unknown error occured:` + errmessage
-      Metro.toast.create(message, null, 10000, 'bg-red');
+      cfToast(message, 10000, 'red');
       // printLog(errmessage + "\n(" + url + " on line " + line + ")", errorcolor);
     }
   };
