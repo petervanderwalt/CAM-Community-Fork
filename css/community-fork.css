@@ -1273,9 +1273,6 @@ body, button, input, select, textarea {
     padding: 1px 4px;
     font-size: 11px;
   }
-  .cf-main-toolbar .cf-btn.cf-tb-btn .cf-tb-label {
-    display: none;
-  }
   .cf-main-toolbar .cf-btn.cf-tb-split-toggle {
     height: 30px;
   }

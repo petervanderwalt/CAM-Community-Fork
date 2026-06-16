@@ -228,7 +228,7 @@ function readFile(evt) {
   console.log(evt);
   console.groupEnd();
   // Close the menu
-  $("#drop1").dropdown("toggle");
+  $('.cf-dropdown').hide();
 
   // Files
   var files = evt.target.files || evt.dataTransfer.files;
